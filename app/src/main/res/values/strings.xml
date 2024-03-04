@@ -3,4 +3,10 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="log_in_with_google">Log in with google</string>
+    <string name="sing_up">Sing up</string>
+    <string name="email_username">Email/Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="email_usuario">Email/Usuario</string>
 </resources>
