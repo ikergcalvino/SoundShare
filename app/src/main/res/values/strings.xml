@@ -1,6 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SoundShare</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
+    <string name="title_search">Search</string>
+    <string name="title_add">Add</string>
     <string name="title_notifications">Notifications</string>
+    <string name="title_map">Map</string>
+    <string name="title_profile">Profile</string>
 </resources>
