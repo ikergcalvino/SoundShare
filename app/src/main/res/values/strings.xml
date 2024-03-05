@@ -7,18 +7,16 @@
     <string name="title_notifications">Notifications</string>
     <string name="title_map">Map</string>
     <string name="title_profile">Profile</string>
+    <string name="log_in">Log in</string>
     <string name="log_in_with_google">Log in with Google</string>
     <string name="sign_up">Sign up</string>
-    <string name="email_username">Email / Username</string>
-    <string name="password">Password</string>
-    <string name="log_in">Log in</string>
-    <string name="email_usuario">Email / Usuario</string>
+    <string name="sign_up_with_google">Sign up with Google</string>
     <string name="email">Email</string>
     <string name="username">Username</string>
-    <string name="repeat_password">Repeat Password</string>
-    <string name="signup">Sign Up</string>
-    <string name="login">Log In</string>
-    <string name="signup_with_google">Sign Up with Google</string>
-    <string name="phone_number">Phone Number</string>
+    <string name="email_username">Email / Username</string>
+    <string name="password">Password</string>
+    <string name="email_usuario">Email / Usuario</string>
+    <string name="repeat_password">Repeat password</string>
+    <string name="phone_number">Phone number</string>
     <string name="date_of_birth">Date of birth (dd/mm/yyyy)</string>
 </resources>
