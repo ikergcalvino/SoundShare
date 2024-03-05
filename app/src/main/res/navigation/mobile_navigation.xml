@@ -47,4 +47,10 @@
         android:label="@string/log_in"
         tools:layout="@layout/fragment_login" />
 
+
+    <fragment
+        android:id="@+id/navigation_signup"
+        android:name="com.muei.soundshare.ui.signup.SignupFragment"
+        android:label="@string/signup"
+        tools:layout="@layout/fragment_signup" />
 </navigation>
