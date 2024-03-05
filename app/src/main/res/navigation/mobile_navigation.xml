@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/navigation_login">
+
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.muei.soundshare.ui.home.HomeFragment"
@@ -40,10 +41,10 @@
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
 
-
     <fragment
         android:id="@+id/navigation_login"
         android:name="com.muei.soundshare.ui.login.LoginFragment"
-        android:label="@string/login"
+        android:label="@string/log_in"
         tools:layout="@layout/fragment_login" />
+
 </navigation>
