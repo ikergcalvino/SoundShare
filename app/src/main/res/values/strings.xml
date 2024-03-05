@@ -7,10 +7,10 @@
     <string name="title_notifications">Notifications</string>
     <string name="title_map">Map</string>
     <string name="title_profile">Profile</string>
-    <string name="log_in_with_google">Log in with google</string>
-    <string name="sing_up">Sing up</string>
-    <string name="email_username">Email/Username</string>
+    <string name="log_in_with_google">Log in with Google</string>
+    <string name="sign_up">Sign up</string>
+    <string name="email_username">Email / Username</string>
     <string name="password">Password</string>
-    <string name="login">Login</string>
-    <string name="email_usuario">Email/Usuario</string>
+    <string name="log_in">Log in</string>
+    <string name="email_usuario">Email / Usuario</string>
 </resources>
