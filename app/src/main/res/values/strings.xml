@@ -29,4 +29,7 @@
     <string name="artist_name">Nombre del artista</string>
     <string name="album_image">Imagen del álbum</string>
     <string name="post_text">Texto del post</string>
+    <string name="post">Post</string>
+    <string name="search_song">Search song</string>
+    <string name="search_users_posts">Search users/posts</string>
 </resources>
