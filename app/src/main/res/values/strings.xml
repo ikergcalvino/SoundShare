@@ -20,4 +20,13 @@
     <string name="title_profile">Profile</string>
     <string name="title_search">Search</string>
     <string name="username">Username</string>
+    <string name="users">Users</string>
+    <string name="posts">Posts</string>
+    <string name="profile_image">Imagen de perfil del usuario</string>
+    <string name="arroba_username">\@username</string>
+    <string name="song_name">Nombre de la canción</string>
+    <string name="album_name">Nombre del álbum</string>
+    <string name="artist_name">Nombre del artista</string>
+    <string name="album_image">Imagen del álbum</string>
+    <string name="post_text">Texto del post</string>
 </resources>
