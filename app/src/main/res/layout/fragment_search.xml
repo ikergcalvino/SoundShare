@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="?attr/actionBarSize"
     tools:context=".ui.search.SearchFragment">
 
     <LinearLayout
@@ -28,9 +26,9 @@
             android:id="@+id/text_users_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10sp"
             android:text="@string/users"
-            android:textSize="25sp"
-            android:layout_marginStart="10sp"/>
+            android:textSize="25sp" />
 
         <LinearLayout
             android:id="@+id/profileLayout1"
@@ -53,8 +51,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/arroba_username"
                 android:textSize="18sp" />
-        </LinearLayout>
 
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/profileLayout2"
@@ -77,6 +75,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/arroba_username"
                 android:textSize="18sp" />
+
         </LinearLayout>
 
         <com.google.android.material.divider.MaterialDivider
@@ -88,16 +87,16 @@
             android:id="@+id/text_posts_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10sp"
             android:text="@string/posts"
-            android:textSize="25sp"
-            android:layout_marginStart="10sp"/>
+            android:textSize="25sp" />
 
         <LinearLayout
             android:id="@+id/postProfileLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginStart="20sp">
+            android:layout_marginStart="20sp"
+            android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/profile_image_3"
@@ -111,15 +110,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/arroba_username"
-                android:textSize="18sp"/>
+                android:textSize="18sp" />
 
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/globalPostLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginStart="50sp">
+            android:layout_marginStart="50sp"
+            android:orientation="vertical">
+
             <LinearLayout
                 android:id="@+id/postLayout"
                 android:layout_width="wrap_content"
@@ -130,8 +131,8 @@
                     android:id="@+id/albumImage"
                     android:layout_width="52dp"
                     android:layout_height="52dp"
-                    android:src="@drawable/album"
-                    android:contentDescription="@string/album_image" />
+                    android:contentDescription="@string/album_image"
+                    android:src="@drawable/album" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -143,7 +144,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/song_name"
-                        android:textColor="@android:color/black"
                         android:textSize="12sp" />
 
                     <TextView
@@ -151,7 +151,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/album_name"
-                        android:textColor="@android:color/black"
                         android:textSize="12sp" />
 
                     <TextView
@@ -159,28 +158,28 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/artist_name"
-                        android:textColor="@android:color/black"
                         android:textSize="12sp" />
 
                 </LinearLayout>
 
             </LinearLayout>
+
             <TextView
                 android:id="@+id/postText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/post_text"
-                android:textColor="@android:color/black"
                 android:textSize="14sp" />
+
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/postProfileLayout2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_marginStart="20sp"
-            android:layout_marginTop="5dp">
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/profile_image_4"
@@ -194,15 +193,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/arroba_username"
-                android:textSize="18sp"/>
+                android:textSize="18sp" />
 
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/globalPostLayout2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginStart="50sp">
+            android:layout_marginStart="50sp"
+            android:orientation="vertical">
+
             <LinearLayout
                 android:id="@+id/postLayout2"
                 android:layout_width="wrap_content"
@@ -213,8 +214,8 @@
                     android:id="@+id/albumImage2"
                     android:layout_width="52dp"
                     android:layout_height="52dp"
-                    android:src="@drawable/album"
-                    android:contentDescription="@string/album_image" />
+                    android:contentDescription="@string/album_image"
+                    android:src="@drawable/album" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -226,7 +227,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/song_name"
-                        android:textColor="@android:color/black"
                         android:textSize="12sp" />
 
                     <TextView
@@ -234,7 +234,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/album_name"
-                        android:textColor="@android:color/black"
                         android:textSize="12sp" />
 
                     <TextView
@@ -242,21 +241,20 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/artist_name"
-                        android:textColor="@android:color/black"
                         android:textSize="12sp" />
 
                 </LinearLayout>
 
             </LinearLayout>
+
             <TextView
                 android:id="@+id/postText2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/post_text"
-                android:textColor="@android:color/black"
                 android:textSize="14sp" />
-        </LinearLayout>
 
+        </LinearLayout>
 
     </LinearLayout>
 

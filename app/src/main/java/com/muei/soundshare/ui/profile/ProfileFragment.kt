@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import com.muei.soundshare.R
 import com.muei.soundshare.databinding.FragmentProfileBinding
 
 class ProfileFragment : Fragment() {
@@ -20,6 +22,21 @@ class ProfileFragment : Fragment() {
         val profileViewModel = ViewModelProvider(this)[ProfileViewModel::class.java]
 
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
+
+        binding.topNav.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.navigation_edit -> {
+                    findNavController().navigate(R.id.navigation_edit)
+                    true
+                }
+
+                else -> false
+            }
+        }
+
+        binding.topNav.setNavigationOnClickListener {
+            findNavController().navigate(R.id.navigation_home)
+        }
 
         return binding.root
     }

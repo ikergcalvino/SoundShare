@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="album_image">Imagen del álbum</string>
+    <string name="album_name">Nombre del álbum</string>
     <string name="app_name">SoundShare</string>
+    <string name="arroba_username">\@username</string>
+    <string name="artist_name">Nombre del artista</string>
     <string name="create_one_now"><u>Create one now!</u></string>
+    <string name="daily_songs">Daily songs</string>
     <string name="date_of_birth">Date of birth (dd/mm/yyyy)</string>
     <string name="dont_have_an_account">Don\'t have an account?</string>
     <string name="email">Email</string>
@@ -10,10 +15,19 @@
     <string name="log_in_with_google">Log in with Google</string>
     <string name="password">Password</string>
     <string name="phone_number">Phone number</string>
+    <string name="post">Post</string>
+    <string name="post_text">Texto del post</string>
+    <string name="posts">Posts</string>
+    <string name="profile_image">Imagen de perfil del usuario</string>
     <string name="repeat_password">Repeat password</string>
+    <string name="search_song">Search song</string>
+    <string name="search_users_posts">Search users/posts</string>
     <string name="sign_up">Sign up</string>
     <string name="sign_up_with_google">Sign up with Google</string>
+    <string name="song_name">Nombre de la canción</string>
     <string name="title_add">Add</string>
+    <string name="title_check">Check</string>
+    <string name="title_edit">Edit</string>
     <string name="title_home">Home</string>
     <string name="title_map">Map</string>
     <string name="title_notifications">Notifications</string>
@@ -21,15 +35,4 @@
     <string name="title_search">Search</string>
     <string name="username">Username</string>
     <string name="users">Users</string>
-    <string name="posts">Posts</string>
-    <string name="profile_image">Imagen de perfil del usuario</string>
-    <string name="arroba_username">\@username</string>
-    <string name="song_name">Nombre de la canción</string>
-    <string name="album_name">Nombre del álbum</string>
-    <string name="artist_name">Nombre del artista</string>
-    <string name="album_image">Imagen del álbum</string>
-    <string name="post_text">Texto del post</string>
-    <string name="post">Post</string>
-    <string name="search_song">Search song</string>
-    <string name="search_users_posts">Search users/posts</string>
 </resources>

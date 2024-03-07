@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="?attr/actionBarSize"
     tools:context=".ui.add.AddFragment">
 
     <LinearLayout
@@ -15,9 +14,9 @@
             android:id="@+id/button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/post"
             android:layout_gravity="end"
-            android:layout_marginEnd="15dp"/>
+            android:layout_margin="16dp"
+            android:text="@string/post" />
 
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
@@ -35,11 +34,9 @@
             android:id="@+id/text_users_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="25dp"
             android:text="@string/post_text"
-            android:textSize="20sp"
-            android:layout_marginStart="25sp"
-            android:layout_marginTop="25sp"/>
-
+            android:textSize="20sp" />
 
     </LinearLayout>
 
