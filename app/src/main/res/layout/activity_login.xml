@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.login.LoginFragment">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -67,11 +65,17 @@
             android:layout_margin="4dp"
             android:text="@string/log_in_with_google" />
 
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:gravity="center"
+                android:padding="4dp"
+                android:text="@string/dont_have_an_account" />
 
             <TextView
                 android:id="@+id/create_new_account"
@@ -81,7 +85,7 @@
                 android:focusable="true"
                 android:gravity="center"
                 android:padding="4dp"
-                android:text="@string/sign_up"
+                android:text="@string/create_one_now"
                 android:textColor="?android:attr/colorPrimary" />
 
         </LinearLayout>

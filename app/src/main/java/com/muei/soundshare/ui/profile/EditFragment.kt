@@ -1,4 +1,4 @@
-package com.muei.soundshare.ui.home
+package com.muei.soundshare.ui.profile
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,29 +8,34 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.muei.soundshare.R
-import com.muei.soundshare.databinding.FragmentHomeBinding
+import com.muei.soundshare.databinding.FragmentEditBinding
 
-class HomeFragment : Fragment() {
+class EditFragment : Fragment() {
 
-    private var _binding: FragmentHomeBinding? = null
+    private var _binding: FragmentEditBinding? = null
+
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        val homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+        val editViewModel = ViewModelProvider(this)[EditViewModel::class.java]
 
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentEditBinding.inflate(inflater, container, false)
 
         binding.topNav.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.navigation_profile -> {
+                R.id.navigation_check -> {
                     findNavController().navigate(R.id.navigation_profile)
                     true
                 }
 
                 else -> false
             }
+        }
+
+        binding.topNav.setNavigationOnClickListener {
+            findNavController().navigate(R.id.navigation_profile)
         }
 
         return binding.root
