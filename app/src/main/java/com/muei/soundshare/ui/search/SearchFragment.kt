@@ -1,6 +1,7 @@
 package com.muei.soundshare.ui.search
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,12 @@ class SearchFragment : Fragment() {
         val searchViewModel = ViewModelProvider(this)[SearchViewModel::class.java]
 
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
+
+        val searchBar = binding.searchBar
+
+        searchBar.setOnClickListener{
+            Log.d("SearchFragment", "Searchbar clicked")
+        }
 
         return binding.root
     }

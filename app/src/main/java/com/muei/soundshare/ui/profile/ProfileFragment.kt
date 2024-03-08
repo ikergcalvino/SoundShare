@@ -1,6 +1,7 @@
 package com.muei.soundshare.ui.profile
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +27,7 @@ class ProfileFragment : Fragment() {
         binding.topNav.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.navigation_edit -> {
+                    Log.d("ProfileFragment", "Edit clicked")
                     findNavController().navigate(R.id.navigation_edit)
                     true
                 }
@@ -36,6 +38,7 @@ class ProfileFragment : Fragment() {
 
         binding.topNav.setNavigationOnClickListener {
             findNavController().navigate(R.id.navigation_home)
+            Log.d("ProfileFragment", "Back button clicked")
         }
 
         return binding.root

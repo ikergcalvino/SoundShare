@@ -1,6 +1,7 @@
 package com.muei.soundshare
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
@@ -26,8 +27,76 @@ class MainActivity : AppCompatActivity() {
 
         navView.setupWithNavController(navController)
 
+        val btnMenu = navView.menu
+
+        val homeMenuItem = btnMenu.findItem(R.id.navigation_home)
+        homeMenuItem.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.navigation_home -> {
+                    Log.d("MainActivity", "Home clicked")
+                    navController.navigate(R.id.navigation_home)
+                    true
+                }
+
+                else -> false
+            }
+        }
+
+        val searchMenuItem = btnMenu.findItem(R.id.navigation_search)
+        searchMenuItem.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.navigation_search -> {
+                    Log.d("MainActivity", "Search clicked")
+                    navController.navigate(R.id.navigation_search)
+                    true
+                }
+
+                else -> false
+            }
+        }
+
+        val addMenuItem = btnMenu.findItem(R.id.navigation_add)
+        addMenuItem.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.navigation_add -> {
+                    Log.d("MainActivity", "Add clicked")
+                    navController.navigate(R.id.navigation_add)
+                    true
+                }
+
+                else -> false
+            }
+        }
+
+        val notificationsMenuItem = btnMenu.findItem(R.id.navigation_notifications)
+        notificationsMenuItem.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.navigation_notifications -> {
+                    Log.d("MainActivity", "Notifications clicked")
+                    navController.navigate(R.id.navigation_notifications)
+                    true
+                }
+
+                else -> false
+            }
+        }
+
+        val mapMenuItem = btnMenu.findItem(R.id.navigation_map)
+        mapMenuItem.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.navigation_map -> {
+                    Log.d("MainActivity", "Map clicked")
+                    navController.navigate(R.id.navigation_map)
+                    true
+                }
+
+                else -> false
+            }
+        }
+
         val btnShazam = binding.btnShazam
         btnShazam.setOnClickListener {
+            Log.d("MainActivity", "Shazam button clicked")
             // Crear el AlertDialog personalizado
             val dialogView = layoutInflater.inflate(R.layout.popup_layout, null)
 

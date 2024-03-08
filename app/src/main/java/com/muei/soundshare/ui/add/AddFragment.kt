@@ -1,6 +1,7 @@
 package com.muei.soundshare.ui.add
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,18 @@ class AddFragment : Fragment() {
         val addViewModel = ViewModelProvider(this)[AddViewModel::class.java]
 
         _binding = FragmentAddBinding.inflate(inflater, container, false)
+
+        val btnUpload = binding.buttonUpload
+
+        btnUpload.setOnClickListener {
+            Log.d("AddFragment", "Upload clicked")
+        }
+
+        val searchBar = binding.searchBar
+
+        searchBar.setOnClickListener{
+            Log.d("AddFragment", "Searchbar clicked")
+        }
 
         return binding.root
     }
