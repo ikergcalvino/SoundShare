@@ -1,13 +1,11 @@
 package com.muei.soundshare
 
 import android.os.Bundle
-import android.view.Gravity
-import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.muei.soundshare.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -21,32 +19,21 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val navView: BottomNavigationView = binding.bottomNav
-
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
-
         navView.setupWithNavController(navController)
 
-        val btnShazam = binding.btnShazam
-        btnShazam.setOnClickListener {
-            // Crear el AlertDialog personalizado
-            val dialogView = layoutInflater.inflate(R.layout.popup_layout, null)
+        binding.buttonShazam.setOnClickListener {
+            val dialogView = layoutInflater.inflate(R.layout.song_layout, null)
 
-            val builder = AlertDialog.Builder(this)
-            builder.setView(dialogView)
-                .setPositiveButton("Close") { dialog, _ ->
-                    dialog.dismiss()
-                }
-
-            val dialog = builder.create()
-
-            // Personalizar el borde del AlertDialog
-            dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-            dialog.show()
-            dialog.window?.setLayout(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-            dialog.window?.setGravity(Gravity.CENTER) // Centrar el AlertDialog en la pantalla
+            MaterialAlertDialogBuilder(this).setTitle("R.string.title").setView(dialogView)
+                .setMessage("R.string.supporting_text")
+                .setNeutralButton("R.string.cancel") { dialog, which ->
+                    // Respond to neutral button press
+                }.setNegativeButton("R.string.decline") { dialog, which ->
+                    // Respond to negative button press
+                }.setPositiveButton("R.string.accept") { dialog, which ->
+                    // Respond to positive button press
+                }.show()
         }
     }
 }

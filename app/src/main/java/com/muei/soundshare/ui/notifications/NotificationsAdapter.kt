@@ -3,23 +3,26 @@ package com.muei.soundshare.ui.notifications
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.muei.soundshare.databinding.NotificationListBinding
+import com.google.android.material.textview.MaterialTextView
+import com.muei.soundshare.R
 
 class NotificationsAdapter(private val notifications: List<Notification>) :
     RecyclerView.Adapter<NotificationsAdapter.ViewHolder>() {
 
-    class ViewHolder(private val binding: NotificationListBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
+        RecyclerView.ViewHolder(inflater.inflate(R.layout.notification_layout, parent, false)) {
+
+        private val notificationTitle: MaterialTextView =
+            itemView.findViewById(R.id.notification_title)
+
         fun bind(notification: Notification) {
-            binding.notificationText.text = notification.notification
+            notificationTitle.text = notification.notification
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding =
-            NotificationListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-
-        return ViewHolder(binding)
+        val inflater = LayoutInflater.from(parent.context)
+        return ViewHolder(inflater, parent)
     }
 
     override fun getItemCount() = notifications.size

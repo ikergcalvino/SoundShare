@@ -8,43 +8,43 @@
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.muei.soundshare.ui.home.HomeFragment"
-        android:label="@string/title_home"
+        android:label="@string/home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_search"
         android:name="com.muei.soundshare.ui.search.SearchFragment"
-        android:label="@string/title_search"
+        android:label="@string/search"
         tools:layout="@layout/fragment_search" />
 
     <fragment
-        android:id="@+id/navigation_add"
-        android:name="com.muei.soundshare.ui.add.AddFragment"
-        android:label="@string/title_add"
-        tools:layout="@layout/fragment_add" />
+        android:id="@+id/navigation_post"
+        android:name="com.muei.soundshare.ui.post.PostFragment"
+        android:label="@string/post"
+        tools:layout="@layout/fragment_post" />
 
     <fragment
         android:id="@+id/navigation_notifications"
         android:name="com.muei.soundshare.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
+        android:label="@string/notifications"
         tools:layout="@layout/fragment_notifications" />
 
     <fragment
         android:id="@+id/navigation_map"
         android:name="com.muei.soundshare.ui.map.MapFragment"
-        android:label="@string/title_map"
+        android:label="@string/map"
         tools:layout="@layout/fragment_map" />
 
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.muei.soundshare.ui.profile.ProfileFragment"
-        android:label="@string/title_profile"
+        android:label="@string/profile"
         tools:layout="@layout/fragment_profile" />
 
     <fragment
-        android:id="@+id/navigation_edit"
-        android:name="com.muei.soundshare.ui.profile.EditFragment"
-        android:label="@string/title_edit"
-        tools:layout="@layout/fragment_edit" />
+        android:id="@+id/navigation_edit_profile"
+        android:name="com.muei.soundshare.ui.profile.ProfileEditFragment"
+        android:label="@string/edit_profile"
+        tools:layout="@layout/fragment_profile_edit" />
 
 </navigation>

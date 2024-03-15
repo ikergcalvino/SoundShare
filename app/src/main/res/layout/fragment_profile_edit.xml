@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.profile.EditFragment">
+    tools:context=".ui.profile.ProfileEditFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,8 +19,6 @@
                 android:id="@+id/top_nav"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:contentInsetStart="0dp"
-                app:contentInsetStartWithNavigation="0dp"
                 app:layout_scrollFlags="scroll|enterAlways|snap"
                 app:menu="@menu/edit_profile_nav_menu"
                 app:navigationIcon="@drawable/ic_close" />
@@ -37,7 +35,6 @@
             <com.google.android.material.imageview.ShapeableImageView
                 android:layout_width="128dp"
                 android:layout_height="128dp"
-                android:contentDescription=""
                 android:src="@drawable/ic_account_circle" />
 
             <com.google.android.material.textview.MaterialTextView

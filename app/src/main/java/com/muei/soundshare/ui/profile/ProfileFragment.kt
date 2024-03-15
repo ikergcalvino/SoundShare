@@ -13,7 +13,6 @@ import com.muei.soundshare.databinding.FragmentProfileBinding
 class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
-
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -25,8 +24,8 @@ class ProfileFragment : Fragment() {
 
         binding.topNav.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.navigation_edit -> {
-                    findNavController().navigate(R.id.navigation_edit)
+                R.id.navigation_edit_profile -> {
+                    findNavController().navigate(R.id.navigation_edit_profile)
                     true
                 }
 

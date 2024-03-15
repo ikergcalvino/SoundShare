@@ -8,20 +8,19 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.muei.soundshare.R
-import com.muei.soundshare.databinding.FragmentEditBinding
+import com.muei.soundshare.databinding.FragmentProfileEditBinding
 
-class EditFragment : Fragment() {
+class ProfileEditFragment : Fragment() {
 
-    private var _binding: FragmentEditBinding? = null
-
+    private var _binding: FragmentProfileEditBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        val editViewModel = ViewModelProvider(this)[EditViewModel::class.java]
+        val profileEditViewModel = ViewModelProvider(this)[ProfileEditViewModel::class.java]
 
-        _binding = FragmentEditBinding.inflate(inflater, container, false)
+        _binding = FragmentProfileEditBinding.inflate(inflater, container, false)
 
         binding.topNav.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
