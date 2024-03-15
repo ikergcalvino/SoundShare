@@ -21,10 +21,8 @@ class SearchFragment : Fragment() {
 
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
-        val searchBar = binding.searchBar
-
-        searchBar.setOnClickListener{
-            Log.d("SearchFragment", "Searchbar clicked")
+        binding.searchBar.setOnClickListener {
+            Log.d("SearchFragment", "Search bar clicked")
         }
 
         return binding.root

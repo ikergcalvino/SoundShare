@@ -1,6 +1,7 @@
 package com.muei.soundshare.ui.post
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,8 +24,10 @@ class PostFragment : Fragment() {
 
         binding.switchLocation.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
+                Log.d("PostFragment", "Location on")
                 binding.switchLocation.setThumbIconResource(R.drawable.ic_location_on)
             } else {
+                Log.d("PostFragment", "Location off")
                 binding.switchLocation.setThumbIconResource(R.drawable.ic_location_off)
             }
         }

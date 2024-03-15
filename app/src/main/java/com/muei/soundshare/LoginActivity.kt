@@ -2,6 +2,7 @@ package com.muei.soundshare
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.muei.soundshare.databinding.ActivityLoginBinding
 
@@ -23,6 +24,8 @@ class LoginActivity : AppCompatActivity() {
 
         binding.buttonLogInWithGoogle.setOnClickListener {
             Log.d("LoginActivity", "Log in with Google button clicked")
+            val mainIntent = Intent(this@LoginActivity, MainActivity::class.java)
+            startActivity(mainIntent)
         }
 
         binding.buttonCreateNewAccount.setOnClickListener {

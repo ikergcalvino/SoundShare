@@ -38,7 +38,8 @@ class SignupActivity : AppCompatActivity() {
 
         binding.buttonSignUpWithGoogle.setOnClickListener {
             Log.d("SignupActivity", "Sign up with Google button clicked")
-
+            val mainIntent = Intent(this@SignupActivity, MainActivity::class.java)
+            startActivity(mainIntent)
         }
     }
 }
