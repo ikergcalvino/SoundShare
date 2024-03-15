@@ -11,7 +11,6 @@ import com.muei.soundshare.databinding.FragmentMapBinding
 class MapFragment : Fragment() {
 
     private var _binding: FragmentMapBinding? = null
-
     private val binding get() = _binding!!
 
     override fun onCreateView(
