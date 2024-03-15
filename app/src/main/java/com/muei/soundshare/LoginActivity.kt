@@ -16,15 +16,17 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.buttonLogIn.setOnClickListener {
+            Log.d("LoginActivity", "Log in button clicked")
             val mainIntent = Intent(this@LoginActivity, MainActivity::class.java)
             startActivity(mainIntent)
         }
 
         binding.buttonLogInWithGoogle.setOnClickListener {
-
+            Log.d("LoginActivity", "Log in with Google button clicked")
         }
 
         binding.buttonCreateNewAccount.setOnClickListener {
+            Log.d("LoginActivity", "Create new account button clicked")
             val signupIntent = Intent(this@LoginActivity, SignupActivity::class.java)
             startActivity(signupIntent)
         }

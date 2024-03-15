@@ -2,6 +2,7 @@ package com.muei.soundshare
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.muei.soundshare.databinding.ActivitySignupBinding
@@ -30,11 +31,13 @@ class SignupActivity : AppCompatActivity() {
         }
 
         binding.buttonSignUp.setOnClickListener {
+            Log.d("SignupActivity", "Sign up button clicked")
             val mainIntent = Intent(this@SignupActivity, MainActivity::class.java)
             startActivity(mainIntent)
         }
 
         binding.buttonSignUpWithGoogle.setOnClickListener {
+            Log.d("SignupActivity", "Sign up with Google button clicked")
 
         }
     }
