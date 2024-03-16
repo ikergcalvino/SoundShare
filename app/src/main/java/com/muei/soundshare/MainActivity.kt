@@ -1,5 +1,6 @@
 package com.muei.soundshare
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -39,7 +40,8 @@ class MainActivity : AppCompatActivity() {
 
                 R.id.navigation_post -> {
                     Log.d("MainActivity", "Post clicked")
-                    navController.navigate(R.id.navigation_post)
+                    val postIntent = Intent(this@MainActivity, PostActivity::class.java)
+                    startActivity(postIntent)
                     true
                 }
 
@@ -64,12 +66,12 @@ class MainActivity : AppCompatActivity() {
             val dialogView = layoutInflater.inflate(R.layout.song_layout, null)
 
             MaterialAlertDialogBuilder(this).setTitle("Title").setView(dialogView)
-                .setMessage("Support Text").setNeutralButton("Cancel") { dialog, which ->
-                    // Respond to neutral button press
-                }.setNegativeButton("Decline") { dialog, which ->
-                    // Respond to negative button press
-                }.setPositiveButton("Accept") { dialog, which ->
-                    // Respond to positive button press
+                .setMessage("Support Text").setNeutralButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+                }.setNegativeButton("Decline") { dialog, _ ->
+                    dialog.dismiss()
+                }.setPositiveButton("Accept") { dialog, _ ->
+                    dialog.dismiss()
                 }.show()
         }
     }
