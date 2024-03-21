@@ -22,7 +22,7 @@ class SearchFragment : Fragment() {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
         binding.searchBar.setOnClickListener {
-            Log.d("SearchFragment", "Search bar clicked")
+            Log.d("SoundShare", "Search bar clicked")
         }
 
         return binding.root

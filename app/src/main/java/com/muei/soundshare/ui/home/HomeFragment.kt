@@ -26,7 +26,7 @@ class HomeFragment : Fragment() {
         binding.topNav.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.navigation_profile -> {
-                    Log.d("HomeFragment", "Profile clicked")
+                    Log.d("SoundShare", "Profile clicked")
                     findNavController().navigate(R.id.navigation_profile)
                     true
                 }

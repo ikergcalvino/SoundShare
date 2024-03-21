@@ -26,7 +26,7 @@ class ProfileFragment : Fragment() {
         binding.topNav.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.navigation_edit_profile -> {
-                    Log.d("ProfileFragment", "Edit button clicked")
+                    Log.d("SoundShare", "Edit button clicked")
                     findNavController().navigate(R.id.navigation_edit_profile)
                     true
                 }
@@ -36,7 +36,7 @@ class ProfileFragment : Fragment() {
         }
 
         binding.topNav.setNavigationOnClickListener {
-            Log.d("ProfileFragment", "Back button clicked")
+            Log.d("SoundShare", "Back button clicked")
             findNavController().navigate(R.id.navigation_home)
         }
 

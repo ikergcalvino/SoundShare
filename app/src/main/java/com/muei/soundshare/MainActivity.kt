@@ -27,32 +27,33 @@ class MainActivity : AppCompatActivity() {
         navView.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.navigation_home -> {
-                    Log.d("MainActivity", "Home clicked")
+                    Log.d("SoundShare", "Home clicked")
                     navController.navigate(R.id.navigation_home)
                     true
                 }
 
                 R.id.navigation_search -> {
-                    Log.d("MainActivity", "Search clicked")
+                    Log.d("SoundShare", "Search clicked")
                     navController.navigate(R.id.navigation_search)
                     true
                 }
 
                 R.id.navigation_post -> {
-                    Log.d("MainActivity", "Post clicked")
+                    Log.d("SoundShare", "Post clicked")
                     val postIntent = Intent(this@MainActivity, PostActivity::class.java)
                     startActivity(postIntent)
+                    overridePendingTransition(R.anim.slide_up, 0)
                     true
                 }
 
                 R.id.navigation_notifications -> {
-                    Log.d("MainActivity", "Notifications clicked")
+                    Log.d("SoundShare", "Notifications clicked")
                     navController.navigate(R.id.navigation_notifications)
                     true
                 }
 
                 R.id.navigation_map -> {
-                    Log.d("MainActivity", "Map clicked")
+                    Log.d("SoundShare", "Map clicked")
                     navController.navigate(R.id.navigation_map)
                     true
                 }
@@ -62,7 +63,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.buttonShazam.setOnClickListener {
-            Log.d("MainActivity", "Shazam button clicked")
+            Log.d("SoundShare", "Shazam button clicked")
             val dialogView = layoutInflater.inflate(R.layout.song_layout, null)
 
             MaterialAlertDialogBuilder(this).setTitle("Title").setView(dialogView)

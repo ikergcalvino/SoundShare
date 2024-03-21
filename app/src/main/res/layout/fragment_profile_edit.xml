@@ -27,23 +27,34 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
             android:padding="16dp">
 
             <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/profile_image"
                 android:layout_width="128dp"
                 android:layout_height="128dp"
                 android:src="@drawable/ic_account_circle" />
 
-            <com.google.android.material.textview.MaterialTextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:paddingTop="16dp"
-                android:paddingBottom="4dp"
-                android:text="Hola" />
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_friends"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/friends"
+                    app:cornerRadius="4dp" />
+
+                <include layout="@layout/song_layout" />
+
+            </LinearLayout>
 
         </LinearLayout>
 

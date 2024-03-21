@@ -19,22 +19,32 @@ class PostActivity : AppCompatActivity() {
 
         binding.switchLocation.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                Log.d("PostActivity", "Location on")
+                Log.d("SoundShare", "Location on")
                 binding.switchLocation.setThumbIconResource(R.drawable.ic_location_on)
             } else {
-                Log.d("PostActivity", "Location off")
+                Log.d("SoundShare", "Location off")
                 binding.switchLocation.setThumbIconResource(R.drawable.ic_location_off)
             }
         }
 
+        binding.buttonPost.setOnClickListener {
+            Log.d("SoundShare", "Post button clicked")
+            val mainIntent = Intent(this@PostActivity, MainActivity::class.java)
+            mainIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            startActivity(mainIntent)
+            overridePendingTransition(R.anim.slide_down, 0)
+            finish()
+        }
+
         binding.topNav.setNavigationOnClickListener {
-            Log.d("PostActivity", "Back button clicked")
+            Log.d("SoundShare", "Back button clicked")
             MaterialAlertDialogBuilder(this).setTitle("Confirmación")
                 .setMessage("¿Estás seguro de que quieres salir? Se perderán los datos del post.")
                 .setPositiveButton("Sí") { dialog, _ ->
                     val mainIntent = Intent(this@PostActivity, MainActivity::class.java)
                     mainIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                     startActivity(mainIntent)
+                    overridePendingTransition(R.anim.slide_down, 0)
                     dialog.dismiss()
                     finish()
                 }.setNegativeButton("Cancelar") { dialog, _ ->
