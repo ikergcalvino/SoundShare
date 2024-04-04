@@ -9,7 +9,11 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="16dp"
+        app:layout_constraintBottom_toTopOf="@id/already_have_an_account_layout"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/email_layout"
@@ -159,6 +163,34 @@
             android:text="@string/sign_up_with_google"
             app:cornerRadius="4dp"
             app:icon="@drawable/ic_google" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/already_have_an_account_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:padding="4dp"
+            android:text="@string/already_have_an_account" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_log_in_here"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/log_in_here"
+            app:cornerRadius="4dp" />
 
     </LinearLayout>
 

@@ -43,5 +43,12 @@ class SignupActivity : AppCompatActivity() {
             startActivity(mainIntent)
             finish()
         }
+
+        binding.buttonLogInHere.setOnClickListener {
+            Log.d("SoundShare", "Log in here button clicked")
+            val loginIntent = Intent(this@SignupActivity, LoginActivity::class.java)
+            startActivity(loginIntent)
+            finish()
+        }
     }
 }

@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">SoundShare</string>
 
+    <string name="already_have_an_account">Already have an account?</string>
     <string name="artist_name">Artist name</string>
     <string name="check">Check</string>
     <string name="create_one_now"><u>Create one now!</u></string>
@@ -14,6 +15,7 @@
     <string name="friends">Friends</string>
     <string name="home">Home</string>
     <string name="log_in">Log in</string>
+    <string name="log_in_here"><u>Log in here!</u></string>
     <string name="log_in_with_google">Log in with Google</string>
     <string name="map">Map</string>
     <string name="notifications">Notifications</string>
