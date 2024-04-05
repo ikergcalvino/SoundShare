@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.muei.soundshare.R
 import com.muei.soundshare.databinding.FragmentNotificationsBinding
+import com.muei.soundshare.entities.Notification
 
 class NotificationsFragment : Fragment() {
 
