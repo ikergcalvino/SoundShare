@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textview.MaterialTextView
 import com.muei.soundshare.R
+import com.muei.soundshare.entities.Notification
 
 class NotificationsAdapter(private val notifications: List<Notification>) :
     RecyclerView.Adapter<NotificationsAdapter.ViewHolder>() {
