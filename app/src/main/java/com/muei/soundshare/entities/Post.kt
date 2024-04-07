@@ -1,11 +1,22 @@
 package com.muei.soundshare.entities
 
+import androidx.room.*
 import java.time.LocalDateTime
 
+@Entity(
+    foreignKeys = [
+        ForeignKey(entity = User::class,
+            parentColumns = ["userId"],
+            childColumns = ["userId"]),
+        ForeignKey(entity = Song::class,
+            parentColumns = ["songId"],
+            childColumns = ["songId"])
+    ]
+)
 data class Post(
-    val postId: Long = 0,
+    @PrimaryKey(autoGenerate = true) val postId: Long = 0,
     val userId: Long,
-    val song: Song,
+    val songId: Long, // Assuming 'Song' has a 'songId' field
     val content: String? = null,
     val dateTime: LocalDateTime,
     val location: String,
