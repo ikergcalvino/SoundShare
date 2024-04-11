@@ -12,6 +12,18 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
+        android:id="@+id/navigation_home_posts"
+        android:name="com.muei.soundshare.ui.home.HomePostsFragment"
+        android:label="@string/posts"
+        tools:layout="@layout/fragment_home_posts" />
+
+    <fragment
+        android:id="@+id/navigation_home_daily_songs"
+        android:name="com.muei.soundshare.ui.home.HomeDailySongsFragment"
+        android:label="@string/daily_songs"
+        tools:layout="@layout/fragment_home_daily_songs" />
+
+    <fragment
         android:id="@+id/navigation_search"
         android:name="com.muei.soundshare.ui.search.SearchFragment"
         android:label="@string/search"

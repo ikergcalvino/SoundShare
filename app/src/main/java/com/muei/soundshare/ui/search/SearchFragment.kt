@@ -23,6 +23,8 @@ class SearchFragment : Fragment() {
 
         binding.searchBar.setOnClickListener {
             Log.d("SoundShare", "Search bar clicked")
+
+            // CoroutineScope para la búsqueda
         }
 
         return binding.root

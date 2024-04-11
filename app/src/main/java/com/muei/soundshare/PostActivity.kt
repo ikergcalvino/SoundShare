@@ -29,6 +29,9 @@ class PostActivity : AppCompatActivity() {
 
         binding.buttonPost.setOnClickListener {
             Log.d("SoundShare", "Post button clicked")
+
+            // ContentService para la publicación asíncrona
+
             val mainIntent = Intent(this@PostActivity, MainActivity::class.java)
             mainIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             startActivity(mainIntent)
