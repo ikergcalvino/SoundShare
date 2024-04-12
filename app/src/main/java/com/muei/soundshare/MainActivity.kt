@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
             MaterialAlertDialogBuilder(this).setTitle("Title").setView(dialogView)
                 .setMessage("Support Text").setNeutralButton("Cancel") { dialog, _ ->
                     dialog.dismiss()
-                }.setNegativeButton("Decline") { dialog, _ ->
+                }.setNegativeButton("Post") { dialog, _ ->
                     dialog.dismiss()
                 }.setPositiveButton("Accept") { dialog, _ ->
                     dialog.dismiss()
