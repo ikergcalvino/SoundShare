@@ -27,6 +27,9 @@ class ProfileEditFragment : Fragment() {
             when (menuItem.itemId) {
                 R.id.navigation_check -> {
                     Log.d("SoundShare", "Confirm button clicked")
+
+                    // ProfileService para la actualización asíncrona
+
                     findNavController().navigate(R.id.navigation_profile)
                     true
                 }
