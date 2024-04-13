@@ -4,12 +4,12 @@ import java.time.LocalDate
 
 data class User(
     val userId: Long = 0,
-    val email: String,
     val username: String,
+    val email: String,
     val password: String,
     var dateOfBirth: LocalDate,
     var phone: String? = null,
-    val favouriteSong: Song? = null,
+    val favouriteSong: Long? = 0,
     val profilePicture: String? = null,
-    val friendsCount: Int = 0
+    val friends: List<Long> = emptyList()
 )
