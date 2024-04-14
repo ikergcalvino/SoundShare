@@ -52,7 +52,7 @@
                     android:text="@string/friends"
                     app:cornerRadius="4dp" />
 
-                <include layout="@layout/song_layout" />
+                <include layout="@layout/layout_song" />
 
             </LinearLayout>
 

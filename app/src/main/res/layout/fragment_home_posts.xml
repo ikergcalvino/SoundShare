@@ -12,6 +12,6 @@
 
     <include
         android:id="@+id/loading_overlay"
-        layout="@layout/loading_overlay" />
+        layout="@layout/overlay_loading" />
 
 </RelativeLayout>

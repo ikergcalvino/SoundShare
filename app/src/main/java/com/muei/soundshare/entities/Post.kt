@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 data class Post(
     val postId: Long = 0,
     val userId: Long,
-    val songId: Long,
+    val songId: String,
     val content: String? = null,
     val dateTime: LocalDateTime,
     val location: String?,

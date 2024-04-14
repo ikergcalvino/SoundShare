@@ -2,6 +2,8 @@ package com.muei.soundshare
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -26,6 +28,22 @@ class PostActivity : AppCompatActivity() {
                 binding.switchLocation.setThumbIconResource(R.drawable.ic_location_off)
             }
         }
+
+        binding.searchView.setupWithSearchBar(binding.searchBar)
+        binding.searchView.editText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // Aquí puedes manejar el evento antes de que el texto cambie
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // Aquí puedes manejar el evento cuando el texto está cambiando
+                // Puedes usar 's' para buscar coincidencias en los nombres de los usuarios y los mensajes de los posts
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                // Aquí puedes manejar el evento después de que el texto haya cambiado
+            }
+        })
 
         binding.buttonPost.setOnClickListener {
             Log.d("SoundShare", "Post button clicked")

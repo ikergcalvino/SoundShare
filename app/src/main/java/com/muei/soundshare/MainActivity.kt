@@ -64,14 +64,15 @@ class MainActivity : AppCompatActivity() {
 
         binding.buttonShazam.setOnClickListener {
             Log.d("SoundShare", "Shazam button clicked")
-            val dialogView = layoutInflater.inflate(R.layout.song_layout, null)
+            val dialogView = layoutInflater.inflate(R.layout.layout_song, null)
 
             MaterialAlertDialogBuilder(this).setTitle("Title").setView(dialogView)
-                .setMessage("Support Text").setNeutralButton("Cancel") { dialog, _ ->
+                .setMessage("Support Text")
+                .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                     dialog.dismiss()
-                }.setNegativeButton("Post") { dialog, _ ->
+                }.setNeutralButton(getString(R.string.post)) { dialog, _ ->
                     dialog.dismiss()
-                }.setPositiveButton("Accept") { dialog, _ ->
+                }.setPositiveButton(getString(R.string.ok)) { dialog, _ ->
                     dialog.dismiss()
                 }.show()
         }

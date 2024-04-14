@@ -3,6 +3,7 @@
     <color name="ss_theme_primary">#FFB59D</color>
     <color name="ss_theme_onPrimary">#55200D</color>
     <color name="ss_theme_primaryContainer">#723521</color>
+    <color name="ss_theme_primaryContainerTransparent">#80723521</color>
     <color name="ss_theme_onPrimaryContainer">#FFDBD0</color>
     <color name="ss_theme_secondary">#9CD49F</color>
     <color name="ss_theme_onSecondary">#003914</color>

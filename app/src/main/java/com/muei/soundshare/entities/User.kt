@@ -9,7 +9,7 @@ data class User(
     val password: String,
     var dateOfBirth: LocalDate,
     var phone: String? = null,
-    val favouriteSong: Long? = 0,
+    val favouriteSongId: String? = null,
     val profilePicture: String? = null,
-    val friends: List<Long> = emptyList()
+    val friendsIds: List<Long> = emptyList()
 )

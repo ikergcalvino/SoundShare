@@ -53,7 +53,7 @@
                     android:text="@string/friends"
                     app:cornerRadius="4dp" />
 
-                <include layout="@layout/song_layout" />
+                <include layout="@layout/layout_song" />
 
             </LinearLayout>
 
@@ -66,9 +66,9 @@
             android:layout_margin="8dp"
             android:text="@string/posts" />
 
-        <include layout="@layout/post_layout" />
+        <include layout="@layout/layout_post" />
 
-        <include layout="@layout/post_layout" />
+        <include layout="@layout/layout_post" />
 
     </LinearLayout>
 
