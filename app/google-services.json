@@ -12,7 +12,20 @@
           "package_name": "com.muei.soundshare"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "560113047004-7tehame02hj8r3m8rtnmv6ous0vhsv41.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.muei.soundshare",
+            "certificate_hash": "fa4cd288119d89ee33124c6402895183285c02c2"
+          }
+        },
+        {
+          "client_id": "560113047004-kssj6q8mnkmoqn6lhbvqlnvfhhv8sq21.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDRnmXY6OiOfX-e1hCEzgspaaQAsvqqzKs"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "560113047004-kssj6q8mnkmoqn6lhbvqlnvfhhv8sq21.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
