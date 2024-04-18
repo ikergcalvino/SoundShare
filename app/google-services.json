@@ -14,11 +14,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "560113047004-7tehame02hj8r3m8rtnmv6ous0vhsv41.apps.googleusercontent.com",
+          "client_id": "560113047004-7qm8ks23jd1rse5b2ehm4mv9dgkv1lpd.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.muei.soundshare",
-            "certificate_hash": "fa4cd288119d89ee33124c6402895183285c02c2"
+            "certificate_hash": "c9f3987db4c3310b5f10cb2c04ea28af3640a959"
+          }
+        },
+        {
+          "client_id": "560113047004-l98smmdga4ih4kjgsjdjq0o71m2a8iig.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.muei.soundshare",
+            "certificate_hash": "d0f2055cb90ef9d3b036db612cb9ead575e2327d"
           }
         },
         {
