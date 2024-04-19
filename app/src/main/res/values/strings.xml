@@ -2,6 +2,17 @@
 <resources>
     <string name="app_name">SoundShare</string>
 
+    <string name="email_required">Email is required</string>
+    <string name="username_required">Username is required</string>
+    <string name="password_required">Password is required</string>
+    <string name="password_length">Password must be at least 8 characters long</string>
+    <string name="invalid_email">Invalid email</string>
+    <string name="username_length">Username must be at least 6 characters long</string>
+    <string name="username_taken">Username is already taken</string>
+    <string name="email_taken">Email is already taken</string>
+    <string name="passwords_dont_match">Passwords don\'t match</string>
+    <string name="date_of_birth_required">Date of birth is required</string>
+
     <string name="already_have_an_account">Already have an account?</string>
     <string name="artist_name">Artist name</string>
     <string name="cancel">Cancel</string>

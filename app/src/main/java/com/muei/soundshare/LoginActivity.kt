@@ -65,17 +65,9 @@ class LoginActivity : AppCompatActivity() {
             val signInIntent = googleSignInClient.signInIntent
             startActivityForResult(signInIntent, Constants.RC_SIGN_IN)
 
-            /*showLoading(true)
-            CoroutineScope(Dispatchers.Main).launch {
-                delay(2000)
-                showLoading(false)
-                if (true) {
-                    val mainIntent = Intent(this@LoginActivity, MainActivity::class.java)
-                    startActivity(mainIntent)
-                    finish()
-                } else {
-                }
-            }*/
+            val mainIntent = Intent(this@LoginActivity, MainActivity::class.java)
+            startActivity(mainIntent)
+            finish()
 
         }
 
