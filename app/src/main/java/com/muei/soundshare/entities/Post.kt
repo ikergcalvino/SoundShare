@@ -10,5 +10,7 @@ data class Post(
     val dateTime: LocalDateTime,
     val location: String?,
     val likes: List<Long> = emptyList(),
-    val daily: Boolean
+    val daily: Boolean,
+    val latitud: Double?,
+    val longitud: Double?
 )

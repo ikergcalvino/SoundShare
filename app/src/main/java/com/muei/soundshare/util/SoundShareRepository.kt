@@ -59,7 +59,9 @@ class SoundShareRepository {
             dateTime = LocalDateTime.of(2024, 4, 13, 10, 0),
             location = "Ubicacion 1",
             likes = listOf(2, 3),
-            daily = false
+            daily = false,
+            latitud = null,
+            longitud = null
         ), Post(
             postId = 2,
             userId = 2,
@@ -68,7 +70,10 @@ class SoundShareRepository {
             dateTime = LocalDateTime.of(2024, 4, 12, 15, 30),
             location = "Ubicacion 2",
             likes = listOf(1),
-            daily = true
+            daily = true,
+            latitud = 43.368611,
+            longitud = -8.411389
+
         )
     )
 
