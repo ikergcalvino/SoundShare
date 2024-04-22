@@ -57,18 +57,16 @@ class SoundShareRepository {
             songId = "123",
             content = "Contenido del post 1",
             dateTime = LocalDateTime.of(2024, 4, 13, 10, 0),
-            location = "Ubicacion 1",
             likes = listOf(2, 3),
             daily = false,
-            latitud = null,
-            longitud = null
+            latitud = 43.368611,
+            longitud = -8.411389
         ), Post(
             postId = 2,
             userId = 2,
             songId = "456",
             content = "Contenido del post 2",
             dateTime = LocalDateTime.of(2024, 4, 12, 15, 30),
-            location = "Ubicacion 2",
             likes = listOf(1),
             daily = true,
             latitud = 43.368611,
