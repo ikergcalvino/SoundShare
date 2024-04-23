@@ -3,9 +3,13 @@ package com.muei.soundshare
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.muei.soundshare.databinding.ActivityMainBinding
@@ -14,17 +18,52 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    private lateinit var topNav: MaterialToolbar
+    private lateinit var bottomNav: BottomNavigationView
+    private lateinit var navController: NavController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val navView: BottomNavigationView = binding.bottomNav
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        navView.setupWithNavController(navController)
+        topNav = binding.topNav
+        bottomNav = binding.bottomNav
+        navController = findNavController(R.id.nav_host_fragment_activity_main)
 
-        navView.setOnItemSelectedListener { menuItem ->
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.navigation_home,
+                R.id.navigation_search,
+                R.id.navigation_notifications,
+                R.id.navigation_map
+            )
+        )
+
+        topNav.setupWithNavController(navController, appBarConfiguration)
+        bottomNav.setupWithNavController(navController)
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.navigation_profile, R.id.navigation_edit_profile -> {
+                    topNav.subtitle = destination.label
+                    binding.buttonShazam.visibility = View.GONE
+                    topNav.menu.clear()
+                }
+
+                else -> {
+                    topNav.title = getString(R.string.app_name)
+                    topNav.subtitle = destination.label
+                    if (topNav.menu.size() == 0) {
+                        topNav.inflateMenu(R.menu.top_nav_menu)
+                    }
+                    binding.buttonShazam.visibility = View.VISIBLE
+                }
+            }
+        }
+
+        bottomNav.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.navigation_home -> {
                     Log.d("SoundShare", "Home clicked")
@@ -55,6 +94,18 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_map -> {
                     Log.d("SoundShare", "Map clicked")
                     navController.navigate(R.id.navigation_map)
+                    true
+                }
+
+                else -> false
+            }
+        }
+
+        topNav.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.navigation_profile -> {
+                    Log.d("SoundShare", "Profile clicked")
+                    navController.navigate(R.id.navigation_profile)
                     true
                 }
 
