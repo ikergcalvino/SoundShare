@@ -27,6 +27,8 @@ class SignupActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        auth = FirebaseAuth.getInstance()
+
         binding = ActivitySignupBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -49,17 +51,32 @@ class SignupActivity : AppCompatActivity() {
             Log.d("SoundShare", "Sign up button clicked")
 
             if (validateFields()) {
-                showLoading(true)
-                CoroutineScope(Dispatchers.Main).launch {
-                    delay(2000)
-                    showLoading(false)
-                    if (true) {
-                        val mainIntent = Intent(this@SignupActivity, MainActivity::class.java)
-                        startActivity(mainIntent)
-                        finish()
-                    } else {
+
+                val email = binding.textEmail.text.toString()
+                val password = binding.textPassword.text.toString()
+
+                auth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this) { task ->
+                        if (task.isSuccessful) {
+                            CoroutineScope(Dispatchers.Main).launch {
+                                showLoading(true)
+                                delay(2000)
+                                showLoading(false)
+                                if (true) {
+                                    val mainIntent = Intent(this@SignupActivity, MainActivity::class.java)
+                                    startActivity(mainIntent)
+                                    finish()
+                                } else {
+                                }
+                            }
+                        } else {
+                            Toast.makeText(
+                                baseContext,
+                                "Sign up failed.",
+                                Toast.LENGTH_LONG,
+                            ).show()
+                        }
                     }
-                }
             }
         }
 
@@ -164,7 +181,7 @@ class SignupActivity : AppCompatActivity() {
         return true
     }
 
-   /* public override fun onStart() {
+    public override fun onStart() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = auth.currentUser
@@ -173,7 +190,7 @@ class SignupActivity : AppCompatActivity() {
             startActivity(mainIntent)
             finish()
         }
-    }*/
+    }
 
     private fun showLoading(show: Boolean) {
         if (show) {
