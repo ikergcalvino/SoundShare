@@ -8,9 +8,14 @@ import android.util.Patterns
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.muei.soundshare.databinding.ActivitySignupBinding
+import com.muei.soundshare.util.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -59,15 +64,12 @@ class SignupActivity : AppCompatActivity() {
                     .addOnCompleteListener(this) { task ->
                         if (task.isSuccessful) {
                             CoroutineScope(Dispatchers.Main).launch {
-                                showLoading(true)
                                 delay(2000)
-                                showLoading(false)
-                                if (true) {
-                                    val mainIntent = Intent(this@SignupActivity, MainActivity::class.java)
-                                    startActivity(mainIntent)
-                                    finish()
-                                } else {
-                                }
+                                showLoading(true)
+                                val mainIntent =
+                                    Intent(this@SignupActivity, MainActivity::class.java)
+                                startActivity(mainIntent)
+                                finish()
                             }
                         } else {
                             Toast.makeText(
@@ -83,17 +85,20 @@ class SignupActivity : AppCompatActivity() {
         binding.buttonSignUpWithGoogle.setOnClickListener {
             Log.d("SoundShare", "Sign up with Google button clicked")
 
-            showLoading(true)
-            CoroutineScope(Dispatchers.Main).launch {
-                delay(2000)
-                showLoading(false)
-                if (true) {
-                    val mainIntent = Intent(this@SignupActivity, MainActivity::class.java)
-                    startActivity(mainIntent)
-                    finish()
-                } else {
-                }
-            }
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("560113047004-kssj6q8mnkmoqn6lhbvqlnvfhhv8sq21.apps.googleusercontent.com")
+                .requestEmail()
+                .build()
+
+            val googleSignInClient = GoogleSignIn.getClient(this, gso)
+
+            // Intent para iniciar el flujo de inicio de sesión de Google
+            val signInIntent = googleSignInClient.signInIntent
+            startActivityForResult(signInIntent, Constants.RC_SIGN_IN)
+
+            val mainIntent = Intent(this@SignupActivity, MainActivity::class.java)
+            startActivity(mainIntent)
+            finish()
         }
 
         binding.buttonLogInHere.setOnClickListener {
@@ -102,6 +107,40 @@ class SignupActivity : AppCompatActivity() {
             startActivity(loginIntent)
             finish()
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == Constants.RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                // Google Sign In fue exitoso, autenticar con Firebase
+                val account = task.getResult(ApiException::class.java)!!
+                firebaseAuthWithGoogle(account.idToken!!)
+            } catch (e: ApiException) {
+                // Google Sign In falló
+                Log.w("SoundShare", "Google sign in failed", e)
+            }
+        }
+    }
+
+    // TODO: Abstraer
+    private fun firebaseAuthWithGoogle(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Inicio de sesión exitoso, actualizar UI con la información del usuario firmado
+                    Log.d("SoundShare", "signInWithCredential:success")
+                    val user = auth.currentUser
+                    // ...
+                } else {
+                    // Si el inicio de sesión falla, mostrar un mensaje al usuario
+                    Log.w("SoundShare", "signInWithCredential:failure", task.exception)
+                    // ...
+                }
+            }
     }
 
     private fun validateFields(): Boolean {
