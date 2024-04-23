@@ -100,4 +100,8 @@ class SoundShareRepository {
     fun getNotifications(): List<Notification> {
         return mockNotificationData
     }
+
+    fun getSongById(songId: String): Song? {
+        return mockSongData.find { it.songId == songId }
+    }
 }

@@ -24,4 +24,8 @@ class SearchViewModel : ViewModel() {
     fun getSongs(): List<Song> {
         return soundShareRepository.getSongs()
     }
+
+    fun getSongById(songId: String): Song? {
+        return soundShareRepository.getSongById(songId)
+    }
 }
