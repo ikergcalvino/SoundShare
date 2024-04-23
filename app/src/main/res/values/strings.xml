@@ -38,4 +38,6 @@
     <string name="song_name">Song name</string>
     <string name="username">Username</string>
     <string name="users">Users</string>
+    <string name="ubicacion">ubicación</string>
+    <string name="nocturno">modo nocturno</string>
 </resources>
