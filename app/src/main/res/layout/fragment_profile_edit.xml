@@ -56,6 +56,28 @@
 
             </LinearLayout>
 
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="right"
+            android:padding="16dp">
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switch_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ubicacion"
+                android:drawableStart="@drawable/ic_map" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switch_night_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nocturno" />
+
         </LinearLayout>
 
     </LinearLayout>

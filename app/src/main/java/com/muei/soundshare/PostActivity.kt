@@ -19,10 +19,14 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 import com.muei.soundshare.databinding.ActivityPostBinding
 import com.muei.soundshare.databinding.LayoutSongBinding
 import com.muei.soundshare.ui.search.SearchViewModel
 import com.muei.soundshare.util.SongAdapter
+import java.time.LocalDateTime
+import java.util.Date
 
 class PostActivity : AppCompatActivity() {
 
@@ -31,6 +35,16 @@ class PostActivity : AppCompatActivity() {
     private lateinit var selectedSongLayout: LayoutSongBinding
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
+    val db = Firebase.firestore
+    val post = hashMapOf(
+        "postId" to 0,
+        "userId" to 0,
+        "songId" to 0,
+        "content" to "Mi primer post",
+        "dateTime" to Date.UTC(2024, 2, 3, 12, 30, 0),
+        "location" to "A Coruña",
+        "likes" to "Manuel, Miguel y María"
+    )
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -132,7 +146,13 @@ class PostActivity : AppCompatActivity() {
 
         binding.buttonPost.setOnClickListener {
             Log.d("SoundShare", "Post button clicked")
-
+            db.collection("posts").add(post)
+                .addOnSuccessListener { documentReference ->
+                Log.d("SoundShare", "DocumentSnapshot added with ID: ${documentReference.id}")
+            }
+                .addOnFailureListener { e ->
+                    Log.w("SoundShare", "Error adding document", e)
+                }
             // ContentService para la publicación asíncrona
 
             val mainIntent = Intent(this@PostActivity, MainActivity::class.java)
