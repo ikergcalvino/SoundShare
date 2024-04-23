@@ -1,10 +1,12 @@
 package com.muei.soundshare
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.firebase.auth.FirebaseAuth
@@ -91,56 +93,78 @@ class SignupActivity : AppCompatActivity() {
         val password = binding.textPassword.text.toString()
         val confirmPassword = binding.textRepeatPassword.text.toString()
         val dateOfBirth = binding.textDateOfBirth.text.toString()
+        val red = 239
+        val green = 119
+        val blue = 113
 
         if (email.isEmpty()) {
-            binding.textEmail.error = getString(R.string.email_required)
+            Toast.makeText(this, getString(R.string.email_required), Toast.LENGTH_LONG).show()
+            binding.textEmail.setBackgroundColor(Color.rgb(red, green, blue))
             return false
         }
 
         if (username.isEmpty()) {
-            binding.textUsername.error = getString(R.string.username_required)
+            Toast.makeText(this, getString(R.string.username_required), Toast.LENGTH_SHORT).show()
+            binding.textUsername.setBackgroundColor(Color.rgb(red, green, blue))
             return false
         }
 
         if (username.length < 6) {
-            binding.textUsername.error = getString(R.string.username_length)
+            Toast.makeText(this, getString(R.string.username_length), Toast.LENGTH_SHORT).show()
+            binding.textUsername.setBackgroundColor(Color.rgb(red, green, blue))
             return false
         }
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            binding.textEmail.error = getString(R.string.invalid_email)
+            Toast.makeText(this, getString(R.string.invalid_email), Toast.LENGTH_SHORT).show()
+            binding.textEmail.setBackgroundColor(Color.rgb(red, green, blue))
             return false
         }
 
         if (password.length < 8) {
-            binding.textPassword.error = getString(R.string.password_length)
+            Toast.makeText(this, getString(R.string.password_length), Toast.LENGTH_SHORT).show()
+            binding.textPassword.setBackgroundColor(Color.rgb(red, green, blue))
             return false
         }
 
         if (password.isEmpty()) {
-            binding.textPassword.error = getString(R.string.password_required)
+            Toast.makeText(this, getString(R.string.password_required), Toast.LENGTH_SHORT).show()
+            binding.textPassword.setBackgroundColor(Color.rgb(red, green, blue))
             return false
         }
 
         if (confirmPassword.isEmpty()) {
-            binding.textRepeatPassword.error = getString(R.string.passwords_dont_match)
+            Toast.makeText(this, getString(R.string.passwords_dont_match), Toast.LENGTH_SHORT).show()
+            binding.textRepeatPassword.setBackgroundColor(Color.rgb(red, green, blue))
             return false
         }
 
         if (dateOfBirth.isEmpty()) {
-            binding.textDateOfBirth.error = getString(R.string.date_of_birth_required)
+            Toast.makeText(this, getString(R.string.date_of_birth_required), Toast.LENGTH_SHORT).show()
+            binding.textDateOfBirth.setBackgroundColor(Color.rgb(red, green, blue))
+            return false
+        }
+
+        // TODO: Poner esto más exacto
+        val dateOfBirthArray = dateOfBirth.split("/")
+        val year = dateOfBirthArray[2].toInt()
+        val currentYear = 2024
+        if (currentYear - year < 18) {
+            Toast.makeText(this, getString(R.string.age_restriction), Toast.LENGTH_SHORT).show()
+            binding.textDateOfBirth.setBackgroundColor(Color.rgb(red, green, blue))
             return false
         }
 
         if (password != confirmPassword) {
-            binding.textRepeatPassword.error = getString(R.string.passwords_dont_match)
+            Toast.makeText(this, getString(R.string.passwords_dont_match), Toast.LENGTH_SHORT).show()
+            binding.textRepeatPassword.setBackgroundColor(Color.rgb(red, green, blue))
             return false
         }
 
         return true
     }
 
-    public override fun onStart() {
+   /* public override fun onStart() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = auth.currentUser
@@ -149,7 +173,7 @@ class SignupActivity : AppCompatActivity() {
             startActivity(mainIntent)
             finish()
         }
-    }
+    }*/
 
     private fun showLoading(show: Boolean) {
         if (show) {
