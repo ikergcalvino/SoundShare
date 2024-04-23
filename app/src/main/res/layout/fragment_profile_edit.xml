@@ -11,20 +11,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/top_nav"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:layout_scrollFlags="scroll|enterAlways|snap"
-                app:menu="@menu/edit_profile_nav_menu"
-                app:navigationIcon="@drawable/ic_close" />
-
-        </com.google.android.material.appbar.AppBarLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -56,7 +42,6 @@
 
             </LinearLayout>
 
-
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -80,6 +65,20 @@
 
         </LinearLayout>
 
+        <!-- Edición del perfil -->
+
     </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/button_save"
+        style="?attr/floatingActionButtonLargeStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:contentDescription="TODO"
+        app:fabCustomSize="64dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_save" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
