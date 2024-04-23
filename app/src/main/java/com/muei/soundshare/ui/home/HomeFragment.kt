@@ -24,17 +24,17 @@ class HomeFragment : Fragment() {
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        binding.topNav.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.navigation_profile -> {
-                    Log.d("SoundShare", "Profile clicked")
-                    findNavController().navigate(R.id.navigation_profile)
-                    true
-                }
-
-                else -> false
-            }
-        }
+//        binding.topNav.setOnMenuItemClickListener { menuItem ->
+//            when (menuItem.itemId) {
+//                R.id.navigation_profile -> {
+//                    Log.d("SoundShare", "Profile clicked")
+//                    findNavController().navigate(R.id.navigation_profile)
+//                    true
+//                }
+//
+//                else -> false
+//            }
+//        }
 
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
