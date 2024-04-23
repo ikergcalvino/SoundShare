@@ -7,11 +7,25 @@ import android.text.TextWatcher
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 import com.muei.soundshare.databinding.ActivityPostBinding
+import java.time.LocalDateTime
+import java.util.Date
 
 class PostActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPostBinding
+    val db = Firebase.firestore
+    val post = hashMapOf(
+        "postId" to 0,
+        "userId" to 0,
+        "songId" to 0,
+        "content" to "Mi primer post",
+        "dateTime" to Date.UTC(2024, 2, 3, 12, 30, 0),
+        "location" to "A Coruña",
+        "likes" to "Manuel, Miguel y María"
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +61,13 @@ class PostActivity : AppCompatActivity() {
 
         binding.buttonPost.setOnClickListener {
             Log.d("SoundShare", "Post button clicked")
-
+            db.collection("posts").add(post)
+                .addOnSuccessListener { documentReference ->
+                Log.d("SoundShare", "DocumentSnapshot added with ID: ${documentReference.id}")
+            }
+                .addOnFailureListener { e ->
+                    Log.w("SoundShare", "Error adding document", e)
+                }
             // ContentService para la publicación asíncrona
 
             val mainIntent = Intent(this@PostActivity, MainActivity::class.java)
