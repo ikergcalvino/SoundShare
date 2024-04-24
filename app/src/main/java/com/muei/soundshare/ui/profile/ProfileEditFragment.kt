@@ -1,5 +1,6 @@
 package com.muei.soundshare.ui.profile
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -28,6 +29,25 @@ class ProfileEditFragment : Fragment() {
             // ProfileService para la actualización asíncrona
 
             findNavController().navigateUp()
+        }
+
+        val sharedPreferences = requireActivity().getSharedPreferences("com.muei.soundshare", Context.MODE_PRIVATE)
+
+        binding.switchLocation.isChecked = sharedPreferences.getBoolean("ubicacion", true)
+        binding.switchNightMode.isChecked = sharedPreferences.getBoolean("nocturno", false)
+
+        binding.switchLocation.setOnCheckedChangeListener { _, isChecked ->
+            sharedPreferences.edit().apply {
+                putBoolean("ubicacion", isChecked)
+                apply()
+            }
+        }
+
+        binding.switchNightMode.setOnCheckedChangeListener { _, isChecked ->
+            sharedPreferences.edit().apply {
+                putBoolean("nocturno", isChecked)
+                apply()
+            }
         }
 
         return binding.root

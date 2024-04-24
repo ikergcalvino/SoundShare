@@ -8,6 +8,8 @@ data class Post(
     val songId: String,
     val content: String? = null,
     val dateTime: LocalDateTime,
-    val location: String?,
-    val likes: List<Long> = emptyList()
+    val likes: List<Long> = emptyList(),
+    val daily: Boolean,
+    val latitud: Double,
+    val longitud: Double
 )

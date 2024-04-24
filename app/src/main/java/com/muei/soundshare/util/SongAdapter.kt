@@ -6,8 +6,24 @@ import com.muei.soundshare.databinding.LayoutSongBinding
 import com.muei.soundshare.entities.Song
 
 class SongAdapter(
-    songs: List<Song>
+    private var songs: List<Song>,
+    private val onSongSelected: (String) -> Unit // Callback para manejar la selección de canciones
 ) : BaseAdapter<Song>(songs, R.layout.layout_song) {
+
+    private var filteredSongs: List<Song> = songs
+
+    fun filter(query: String) {
+        filteredSongs = if (query.isEmpty()) {
+            songs
+        } else {
+            songs.filter { it.title.contains(query, ignoreCase = true) || it.artist.contains(query, ignoreCase = true) }
+        }
+        notifyDataSetChanged()
+    }
+
+    override fun getItemCount(): Int {
+        return filteredSongs.size
+    }
 
     override fun bindItem(view: View, item: Song) {
         val binding = LayoutSongBinding.bind(view)
@@ -15,12 +31,11 @@ class SongAdapter(
         binding.apply {
             songName.text = item.title
             artistName.text = item.artist
-            // songImage.setImageDrawable(item.songImage)
         }
     }
 
     override fun onItemClick(item: Song) {
-        TODO("Not yet implemented")
+        onSongSelected(item.songId)
     }
 
     override fun onAddButtonClick(item: Song) {
