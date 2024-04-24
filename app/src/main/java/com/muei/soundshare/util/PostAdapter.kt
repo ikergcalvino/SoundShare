@@ -8,6 +8,15 @@ import com.muei.soundshare.entities.Post
 class PostAdapter(private val posts: List<Post>) : BaseAdapter<Post>(posts, R.layout.layout_post) {
     private var filteredPosts: List<Post> = posts
 
+    fun filter(query: Boolean) {
+        filteredPosts = if (query) {
+            posts.sortedByDescending { it.dateTime }
+        } else {
+            posts
+        }
+        notifyDataSetChanged()
+    }
+
     fun filter(query: String) {
         filteredPosts = if (query.isEmpty()) {
             posts

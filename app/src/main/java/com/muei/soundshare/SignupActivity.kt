@@ -190,13 +190,15 @@ class SignupActivity : AppCompatActivity() {
         }
 
         if (confirmPassword.isEmpty()) {
-            Toast.makeText(this, getString(R.string.passwords_dont_match), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.passwords_dont_match), Toast.LENGTH_SHORT)
+                .show()
             binding.textRepeatPassword.setBackgroundColor(Color.rgb(red, green, blue))
             return false
         }
 
         if (dateOfBirth.isEmpty()) {
-            Toast.makeText(this, getString(R.string.date_of_birth_required), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.date_of_birth_required), Toast.LENGTH_SHORT)
+                .show()
             binding.textDateOfBirth.setBackgroundColor(Color.rgb(red, green, blue))
             return false
         }
@@ -212,7 +214,8 @@ class SignupActivity : AppCompatActivity() {
         }
 
         if (password != confirmPassword) {
-            Toast.makeText(this, getString(R.string.passwords_dont_match), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.passwords_dont_match), Toast.LENGTH_SHORT)
+                .show()
             binding.textRepeatPassword.setBackgroundColor(Color.rgb(red, green, blue))
             return false
         }

@@ -16,7 +16,12 @@ class SongAdapter(
         filteredSongs = if (query.isEmpty()) {
             songs
         } else {
-            songs.filter { it.title.contains(query, ignoreCase = true) || it.artist.contains(query, ignoreCase = true) }
+            songs.filter {
+                it.title.contains(query, ignoreCase = true) || it.artist.contains(
+                    query,
+                    ignoreCase = true
+                )
+            }
         }
         notifyDataSetChanged()
     }

@@ -47,6 +47,7 @@ class PostActivity : AppCompatActivity() {
     private val searchViewModel =
         SearchViewModel()
     private var selectedSongId: String? = null
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +73,6 @@ class PostActivity : AppCompatActivity() {
                 binding.searchView.visibility = View.GONE
                 binding.editText.isEnabled = true // Habilitar el EditText
                 binding.buttonPost.isEnabled = true // Habilitar el botón "Post"
-
 
 
             }
@@ -144,8 +144,8 @@ class PostActivity : AppCompatActivity() {
             Log.d("SoundShare", "Post button clicked")
             db.collection("posts").add(post)
                 .addOnSuccessListener { documentReference ->
-                Log.d("SoundShare", "DocumentSnapshot added with ID: ${documentReference.id}")
-            }
+                    Log.d("SoundShare", "DocumentSnapshot added with ID: ${documentReference.id}")
+                }
                 .addOnFailureListener { e ->
                     Log.w("SoundShare", "Error adding document", e)
                 }

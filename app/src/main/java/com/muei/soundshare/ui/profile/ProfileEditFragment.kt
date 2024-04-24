@@ -31,7 +31,8 @@ class ProfileEditFragment : Fragment() {
             findNavController().navigateUp()
         }
 
-        val sharedPreferences = requireActivity().getSharedPreferences("com.muei.soundshare", Context.MODE_PRIVATE)
+        val sharedPreferences =
+            requireActivity().getSharedPreferences("com.muei.soundshare", Context.MODE_PRIVATE)
 
         binding.switchLocation.isChecked = sharedPreferences.getBoolean("ubicacion", true)
         binding.switchNightMode.isChecked = sharedPreferences.getBoolean("nocturno", false)

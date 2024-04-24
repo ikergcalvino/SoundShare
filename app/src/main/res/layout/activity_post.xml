@@ -18,11 +18,11 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_post"
                 style="@style/Widget.Material3.Button.OutlinedButton"
-                android:enabled="false"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginEnd="8dp"
+                android:enabled="false"
                 android:text="@string/post"
                 app:cornerRadius="4dp" />
 
@@ -54,13 +54,13 @@
                     android:id="@+id/edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:hint="@string/text_post"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
                     android:autofillHints=""
-                    android:inputType="text"
-                    android:enabled="false"/>
+                    android:background="@android:color/transparent"
+                    android:enabled="false"
+                    android:hint="@string/text_post"
+                    android:inputType="text" />
 
             </com.google.android.material.appbar.AppBarLayout>
 
@@ -69,8 +69,7 @@
                 layout="@layout/layout_song"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                 />
+                android:visibility="gone" />
 
 
             <com.google.android.material.search.SearchView
