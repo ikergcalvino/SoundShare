@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -37,18 +38,27 @@ class LoginActivity : AppCompatActivity() {
         binding.buttonLogIn.setOnClickListener {
             Log.d("SoundShare", "Log in button clicked")
 
-            showLoading(true)
-            CoroutineScope(Dispatchers.Main).launch {
-                delay(2000)
-                showLoading(false)
-                if (true) {
-                    val mainIntent = Intent(this@LoginActivity, MainActivity::class.java)
-                    startActivity(mainIntent)
-                    finish()
-                } else {
-                }
-            }
+            val email = binding.textEmail.text.toString()
+            val password = binding.textPassword.text.toString()
 
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            delay(2000)
+                            showLoading(true)
+                            val mainIntent = Intent(this@LoginActivity, MainActivity::class.java)
+                            startActivity(mainIntent)
+                            finish()
+                        }
+                    } else {
+                        Toast.makeText(
+                            baseContext,
+                            "Sign in failed.",
+                            Toast.LENGTH_LONG,
+                        ).show()
+                    }
+                }
         }
 
         binding.buttonLogInWithGoogle.setOnClickListener {
@@ -65,17 +75,9 @@ class LoginActivity : AppCompatActivity() {
             val signInIntent = googleSignInClient.signInIntent
             startActivityForResult(signInIntent, Constants.RC_SIGN_IN)
 
-            /*showLoading(true)
-            CoroutineScope(Dispatchers.Main).launch {
-                delay(2000)
-                showLoading(false)
-                if (true) {
-                    val mainIntent = Intent(this@LoginActivity, MainActivity::class.java)
-                    startActivity(mainIntent)
-                    finish()
-                } else {
-                }
-            }*/
+            val mainIntent = Intent(this@LoginActivity, MainActivity::class.java)
+            startActivity(mainIntent)
+            finish()
 
         }
 
@@ -103,6 +105,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    // TODO: Abstraer
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential)
@@ -118,6 +121,17 @@ class LoginActivity : AppCompatActivity() {
                     // ...
                 }
             }
+    }
+
+    public override fun onStart() {
+        super.onStart()
+        // Check if user is signed in (non-null) and update UI accordingly.
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            val mainIntent = Intent(this@LoginActivity, MainActivity::class.java)
+            startActivity(mainIntent)
+            finish()
+        }
     }
 
     private fun showLoading(show: Boolean) {
