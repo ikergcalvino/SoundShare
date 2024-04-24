@@ -9,14 +9,11 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.Firebase
@@ -25,7 +22,6 @@ import com.muei.soundshare.databinding.ActivityPostBinding
 import com.muei.soundshare.databinding.LayoutSongBinding
 import com.muei.soundshare.ui.search.SearchViewModel
 import com.muei.soundshare.util.SongAdapter
-import java.time.LocalDateTime
 import java.util.Date
 
 class PostActivity : AppCompatActivity() {
