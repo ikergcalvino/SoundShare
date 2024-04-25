@@ -2,6 +2,7 @@ package com.muei.soundshare
 
 import android.Manifest
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -30,6 +31,8 @@ class PostActivity : AppCompatActivity() {
     private lateinit var songAdapter: SongAdapter
     private lateinit var selectedSongLayout: LayoutSongBinding
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var sharedPreferences: SharedPreferences
+
 
     val db = Firebase.firestore
     val post = hashMapOf(
@@ -68,7 +71,6 @@ class PostActivity : AppCompatActivity() {
                 selectedSongLayout.songName.text = selectedSong.title
                 selectedSongLayout.artistName.text = selectedSong.artist
                 selectedSongLayout.buttonRemoveSong.visibility = View.VISIBLE
-
                 selectedSongLayout.root.visibility = View.VISIBLE
                 binding.searchView.visibility = View.GONE
                 binding.editText.isEnabled = true // Habilitar el EditText
@@ -88,6 +90,14 @@ class PostActivity : AppCompatActivity() {
         }
 
         binding.recyclerSongs.adapter = songAdapter
+
+        sharedPreferences = getSharedPreferences("ubicacion", MODE_PRIVATE)
+
+        val locationEnabled = sharedPreferences.getBoolean("location_enabled", false)
+
+        binding.switchLocation.isChecked = locationEnabled
+
+        binding.switchLocation.isEnabled = locationEnabled
 
         binding.switchLocation.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
