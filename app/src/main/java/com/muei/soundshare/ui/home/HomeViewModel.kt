@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import com.muei.soundshare.entities.Post
 import com.muei.soundshare.util.SoundShareRepository
+import java.time.LocalDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)
 class HomeViewModel : ViewModel() {
@@ -12,5 +13,12 @@ class HomeViewModel : ViewModel() {
 
     fun getPosts(): List<Post> {
         return soundShareRepository.getPosts()
+    }
+
+    fun hasDailyPost(userId: Long): Boolean {
+        val today = LocalDateTime.now().toLocalDate()
+        return getPosts().any { post ->
+            post.userId == userId && post.daily && post.dateTime.toLocalDate() == today
+        }
     }
 }
