@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "560113047004-73f3qs8mamsmkfd02aimk16csau4scc2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.muei.soundshare",
+            "certificate_hash": "ed499d1dd702e973b15296007265f86187096597"
+          }
+        },
+        {
           "client_id": "560113047004-7qm8ks23jd1rse5b2ehm4mv9dgkv1lpd.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
