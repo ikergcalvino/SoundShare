@@ -52,7 +52,9 @@
     <string name="users">Users</string>
     <string name="songs">Songs</string>
     <string name="remove">Remove</string>
-    <string name="ubicacion">Ubicación</string>
-    <string name="nocturno">Modo nocturno</string>
+    <string name="ubicacion">Location</string>
+    <string name="nocturno">Night mode</string>
     <string name="age_restriction">You must be over 18</string>
+    <string name="bot_n_para_buscar_canciones_con_shazam">Search button with Shazam</string>
+    <string name="log_out_button">Log out</string>
 </resources>
