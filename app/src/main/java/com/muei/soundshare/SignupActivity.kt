@@ -20,6 +20,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 
 class SignupActivity : AppCompatActivity() {
 
@@ -33,6 +35,8 @@ class SignupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         auth = FirebaseAuth.getInstance()
+
+        val db = Firebase.firestore
 
         binding = ActivitySignupBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -59,6 +63,16 @@ class SignupActivity : AppCompatActivity() {
 
                 val email = binding.textEmail.text.toString()
                 val password = binding.textPassword.text.toString()
+                val username = binding.textUsername.text.toString()
+                val dateOfBirth = binding.textDateOfBirth.text.toString()
+                val phoneNumber = binding.textPhoneNumber.text.toString()
+
+                val user = hashMapOf(
+                    "email" to email,
+                    "username" to username,
+                    "dateOfBirth" to dateOfBirth,
+                    "phoneNumber" to phoneNumber
+                )
 
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this) { task ->
@@ -66,6 +80,14 @@ class SignupActivity : AppCompatActivity() {
                             CoroutineScope(Dispatchers.Main).launch {
                                 delay(2000)
                                 showLoading(true)
+                                db.collection("users")
+                                    .add(user)
+                                    .addOnSuccessListener { documentReference ->
+                                        Log.d("SoundShare", "DocumentSnapshot added with ID: ${documentReference.id}")
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Log.w("SoundShare", "Error adding document", e)
+                                    }
                                 val mainIntent =
                                     Intent(this@SignupActivity, MainActivity::class.java)
                                 startActivity(mainIntent)
