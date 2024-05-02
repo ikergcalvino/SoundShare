@@ -1,6 +1,7 @@
 package com.muei.soundshare
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -40,25 +41,27 @@ class LoginActivity : AppCompatActivity() {
 
             val email = binding.textEmail.text.toString()
             val password = binding.textPassword.text.toString()
-
-            auth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful) {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            delay(2000)
-                            showLoading(true)
-                            val mainIntent = Intent(this@LoginActivity, MainActivity::class.java)
-                            startActivity(mainIntent)
-                            finish()
+            if (validateFields()) {
+                auth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this) { task ->
+                        if (task.isSuccessful) {
+                            CoroutineScope(Dispatchers.Main).launch {
+                                delay(2000)
+                                showLoading(true)
+                                val mainIntent =
+                                    Intent(this@LoginActivity, MainActivity::class.java)
+                                startActivity(mainIntent)
+                                finish()
+                            }
+                        } else {
+                            Toast.makeText(
+                                baseContext,
+                                "Sign in failed.",
+                                Toast.LENGTH_LONG,
+                            ).show()
                         }
-                    } else {
-                        Toast.makeText(
-                            baseContext,
-                            "Sign in failed.",
-                            Toast.LENGTH_LONG,
-                        ).show()
                     }
-                }
+            }
         }
 
         binding.buttonLogInWithGoogle.setOnClickListener {
@@ -105,40 +108,60 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    // TODO: Abstraer
-    private fun firebaseAuthWithGoogle(idToken: String) {
-        val credential = GoogleAuthProvider.getCredential(idToken, null)
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    // Inicio de sesión exitoso, actualizar UI con la información del usuario firmado
-                    Log.d("SoundShare", "signInWithCredential:success")
-                    val user = auth.currentUser
-                    // ...
-                } else {
-                    // Si el inicio de sesión falla, mostrar un mensaje al usuario
-                    Log.w("SoundShare", "signInWithCredential:failure", task.exception)
-                    // ...
+    private fun validateFields(): Boolean {
+        val email = binding.textEmail.text.toString()
+        val password = binding.textPassword.text.toString()
+
+        val red = 239
+        val green = 119
+        val blue = 113
+
+        if (email.isEmpty()) {
+            Toast.makeText(this, getString(R.string.email_required), Toast.LENGTH_LONG).show()
+            binding.textEmail.setBackgroundColor(Color.rgb(red, green, blue))
+            return false
+        }
+        if (password.isEmpty()) {
+            Toast.makeText(this, getString(R.string.password_required), Toast.LENGTH_SHORT).show()
+            binding.textPassword.setBackgroundColor(Color.rgb(red, green, blue))
+            return false
+        }
+        return true
+    }
+        // TODO: Abstraer
+        private fun firebaseAuthWithGoogle(idToken: String) {
+            val credential = GoogleAuthProvider.getCredential(idToken, null)
+            auth.signInWithCredential(credential)
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        // Inicio de sesión exitoso, actualizar UI con la información del usuario firmado
+                        Log.d("SoundShare", "signInWithCredential:success")
+                        val user = auth.currentUser
+                        // ...
+                    } else {
+                        // Si el inicio de sesión falla, mostrar un mensaje al usuario
+                        Log.w("SoundShare", "signInWithCredential:failure", task.exception)
+                        // ...
+                    }
                 }
+        }
+
+        public override fun onStart() {
+            super.onStart()
+            // Check if user is signed in (non-null) and update UI accordingly.
+            val currentUser = auth.currentUser
+            if (currentUser != null) {
+                val mainIntent = Intent(this@LoginActivity, MainActivity::class.java)
+                startActivity(mainIntent)
+                finish()
             }
-    }
+        }
 
-    public override fun onStart() {
-        super.onStart()
-        // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = auth.currentUser
-        if (currentUser != null) {
-            val mainIntent = Intent(this@LoginActivity, MainActivity::class.java)
-            startActivity(mainIntent)
-            finish()
+        private fun showLoading(show: Boolean) {
+            if (show) {
+                loadingOverlay.visibility = View.VISIBLE
+            } else {
+                loadingOverlay.visibility = View.GONE
+            }
         }
     }
-
-    private fun showLoading(show: Boolean) {
-        if (show) {
-            loadingOverlay.visibility = View.VISIBLE
-        } else {
-            loadingOverlay.visibility = View.GONE
-        }
-    }
-}
