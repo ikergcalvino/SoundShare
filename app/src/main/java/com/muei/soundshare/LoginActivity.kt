@@ -128,40 +128,41 @@ class LoginActivity : AppCompatActivity() {
         }
         return true
     }
-        // TODO: Abstraer
-        private fun firebaseAuthWithGoogle(idToken: String) {
-            val credential = GoogleAuthProvider.getCredential(idToken, null)
-            auth.signInWithCredential(credential)
-                .addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful) {
-                        // Inicio de sesión exitoso, actualizar UI con la información del usuario firmado
-                        Log.d("SoundShare", "signInWithCredential:success")
-                        val user = auth.currentUser
-                        // ...
-                    } else {
-                        // Si el inicio de sesión falla, mostrar un mensaje al usuario
-                        Log.w("SoundShare", "signInWithCredential:failure", task.exception)
-                        // ...
-                    }
+
+    // TODO: Abstraer
+    private fun firebaseAuthWithGoogle(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Inicio de sesión exitoso, actualizar UI con la información del usuario firmado
+                    Log.d("SoundShare", "signInWithCredential:success")
+                    val user = auth.currentUser
+                    // ...
+                } else {
+                    // Si el inicio de sesión falla, mostrar un mensaje al usuario
+                    Log.w("SoundShare", "signInWithCredential:failure", task.exception)
+                    // ...
                 }
-        }
-
-        public override fun onStart() {
-            super.onStart()
-            // Check if user is signed in (non-null) and update UI accordingly.
-            val currentUser = auth.currentUser
-            if (currentUser != null) {
-                val mainIntent = Intent(this@LoginActivity, MainActivity::class.java)
-                startActivity(mainIntent)
-                finish()
             }
-        }
+    }
 
-        private fun showLoading(show: Boolean) {
-            if (show) {
-                loadingOverlay.visibility = View.VISIBLE
-            } else {
-                loadingOverlay.visibility = View.GONE
-            }
+    public override fun onStart() {
+        super.onStart()
+        // Check if user is signed in (non-null) and update UI accordingly.
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            val mainIntent = Intent(this@LoginActivity, MainActivity::class.java)
+            startActivity(mainIntent)
+            finish()
         }
     }
+
+    private fun showLoading(show: Boolean) {
+        if (show) {
+            loadingOverlay.visibility = View.VISIBLE
+        } else {
+            loadingOverlay.visibility = View.GONE
+        }
+    }
+}

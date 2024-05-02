@@ -12,16 +12,16 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.firestore
 import com.muei.soundshare.databinding.ActivitySignupBinding
 import com.muei.soundshare.util.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
 
 class SignupActivity : AppCompatActivity() {
 
@@ -83,7 +83,10 @@ class SignupActivity : AppCompatActivity() {
                                 db.collection("users")
                                     .add(user)
                                     .addOnSuccessListener { documentReference ->
-                                        Log.d("SoundShare", "DocumentSnapshot added with ID: ${documentReference.id}")
+                                        Log.d(
+                                            "SoundShare",
+                                            "DocumentSnapshot added with ID: ${documentReference.id}"
+                                        )
                                     }
                                     .addOnFailureListener { e ->
                                         Log.w("SoundShare", "Error adding document", e)

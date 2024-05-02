@@ -50,7 +50,7 @@
             android:background="?android:attr/selectableItemBackground"
             android:contentDescription="@string/remove"
             android:padding="8dp"
-            android:src="@drawable/ic_remove"
+            android:src="@drawable/ic_close"
             android:visibility="invisible" />
 
     </RelativeLayout>
