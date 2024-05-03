@@ -74,33 +74,54 @@ class SignupActivity : AppCompatActivity() {
                     "phoneNumber" to phoneNumber
                 )
 
-                auth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(this) { task ->
-                        if (task.isSuccessful) {
-                            CoroutineScope(Dispatchers.Main).launch {
-                                delay(2000)
-                                showLoading(true)
-                                db.collection("users")
-                                    .add(user)
-                                    .addOnSuccessListener { documentReference ->
-                                        Log.d("SoundShare", "DocumentSnapshot added with ID: ${documentReference.id}")
-                                    }
-                                    .addOnFailureListener { e ->
-                                        Log.w("SoundShare", "Error adding document", e)
-                                    }
-                                val mainIntent =
-                                    Intent(this@SignupActivity, MainActivity::class.java)
-                                startActivity(mainIntent)
-                                finish()
-                            }
-                        } else {
+                val userDocRef = db.collection("users").document(username)
+                userDocRef.get().addOnCompleteListener { docTask ->
+                    if (docTask.isSuccessful) {
+                        val document = docTask.result
+                        if (document.exists()) {
                             Toast.makeText(
                                 baseContext,
-                                "Sign up failed.",
+                                "Username already exists.",
                                 Toast.LENGTH_LONG,
                             ).show()
+                        } else {
+
+                            auth.createUserWithEmailAndPassword(email, password)
+                                .addOnCompleteListener(this) { task ->
+                                    if (task.isSuccessful) {
+                                        CoroutineScope(Dispatchers.Main).launch {
+                                            delay(2000)
+                                            showLoading(true)
+                                            db.collection("users")
+                                                .document(username).set(user)
+                                                .addOnSuccessListener { documentReference ->
+                                                    Log.d(
+                                                        "SoundShare",
+                                                        "DocumentSnapshot added with ID: $username"
+                                                    )
+                                                }
+                                                .addOnFailureListener { e ->
+                                                    Log.w("SoundShare", "Error adding document", e)
+                                                }
+                                            val mainIntent =
+                                                Intent(
+                                                    this@SignupActivity,
+                                                    MainActivity::class.java
+                                                )
+                                            startActivity(mainIntent)
+                                            finish()
+                                        }
+                                    } else {
+                                        Toast.makeText(
+                                            baseContext,
+                                            "Sign up failed.",
+                                            Toast.LENGTH_LONG,
+                                        ).show()
+                                    }
+                                }
                         }
                     }
+                }
             }
         }
 
