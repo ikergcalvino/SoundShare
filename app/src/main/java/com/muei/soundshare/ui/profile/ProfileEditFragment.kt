@@ -1,35 +1,62 @@
 package com.muei.soundshare.ui.profile
 
 import android.content.Context
+import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseAuth
+import com.muei.soundshare.MainActivity
+import com.muei.soundshare.R
 import com.muei.soundshare.databinding.FragmentProfileEditBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class ProfileEditFragment : Fragment() {
 
     private var _binding: FragmentProfileEditBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var auth: FirebaseAuth
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         val profileEditViewModel = ViewModelProvider(this)[ProfileEditViewModel::class.java]
+
+        auth = FirebaseAuth.getInstance()
+        val currentUser = auth.currentUser
 
         _binding = FragmentProfileEditBinding.inflate(inflater, container, false)
 
         binding.buttonSave.setOnClickListener {
             Log.d("SoundShare", "Save button clicked")
 
-            // ProfileService para la actualización asíncrona
+            val password = binding.textPassword.text.toString()
+            val phoneNumber = binding.textPhoneNumber.text.toString()
+            val dateOfBirth = binding.textDateOfBirth.text.toString()
 
-            findNavController().navigateUp()
+            if (validatefields()) {
+                if (password.isNotEmpty()){
+                    currentUser!!.updatePassword(password).addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Log.d("SoundShare", "Password updated")
+                        } else {
+                            Log.d("SoundShare", "Password not updated")
+                        }
+                    }
+                }
+            }
         }
 
         val sharedPreferences =
@@ -58,6 +85,53 @@ class ProfileEditFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    private fun validatefields(): Boolean {
+        val password = binding.textPassword.text.toString()
+        val confirmPassword = binding.textRepeatPassword.text.toString()
+        val dateOfBirth = binding.textDateOfBirth.text.toString()
+        val red = 239
+        val green = 119
+        val blue = 113
+
+        if (password.length < 8) {
+            Toast.makeText(requireContext(), getString(R.string.password_length), Toast.LENGTH_SHORT).show()
+            binding.textPassword.setBackgroundColor(Color.rgb(red, green, blue))
+            return false
+        }
+
+        if (password.isEmpty() and confirmPassword.isNotEmpty()) {
+            Toast.makeText(requireContext(), getString(R.string.password_required), Toast.LENGTH_SHORT).show()
+            binding.textPassword.setBackgroundColor(Color.rgb(red, green, blue))
+            return false
+        }
+
+        if(confirmPassword.isEmpty() and password.isNotEmpty()) {
+            Toast.makeText(requireContext(), getString(R.string.password_required), Toast.LENGTH_SHORT).show()
+            binding.textRepeatPassword.setBackgroundColor(Color.rgb(red, green, blue))
+            return false
+        }
+
+        if (dateOfBirth.isNotEmpty()) {
+            val dateOfBirthArray = dateOfBirth.split("/")
+            val year = dateOfBirthArray[2].toInt()
+            val currentYear = 2024
+            if (currentYear - year < 18) {
+                Toast.makeText(requireContext(), getString(R.string.age_restriction), Toast.LENGTH_SHORT).show()
+                binding.textDateOfBirth.setBackgroundColor(Color.rgb(red, green, blue))
+                return false
+            }
+        }
+
+        if (password != confirmPassword) {
+            Toast.makeText(requireContext(), getString(R.string.passwords_dont_match), Toast.LENGTH_SHORT)
+                .show()
+            binding.textRepeatPassword.setBackgroundColor(Color.rgb(red, green, blue))
+            return false
+        }
+
+        return true
     }
 
     override fun onDestroyView() {

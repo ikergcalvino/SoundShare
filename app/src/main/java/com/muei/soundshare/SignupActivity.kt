@@ -74,7 +74,7 @@ class SignupActivity : AppCompatActivity() {
                     "phoneNumber" to phoneNumber
                 )
 
-                val userDocRef = db.collection("users").document(username)
+                val userDocRef = db.collection("users").document(email)
                 userDocRef.get().addOnCompleteListener { docTask ->
                     if (docTask.isSuccessful) {
                         val document = docTask.result
@@ -93,11 +93,11 @@ class SignupActivity : AppCompatActivity() {
                                             delay(2000)
                                             showLoading(true)
                                             db.collection("users")
-                                                .document(username).set(user)
+                                                .document(email).set(user)
                                                 .addOnSuccessListener { documentReference ->
                                                     Log.d(
                                                         "SoundShare",
-                                                        "DocumentSnapshot added with ID: $username"
+                                                        "DocumentSnapshot added with ID: $email"
                                                     )
                                                 }
                                                 .addOnFailureListener { e ->
