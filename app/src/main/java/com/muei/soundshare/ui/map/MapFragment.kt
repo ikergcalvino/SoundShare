@@ -17,16 +17,18 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.muei.soundshare.R
 import com.muei.soundshare.databinding.FragmentMapBinding
-
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 class MapFragment : Fragment(), OnMapReadyCallback {
 
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
     private lateinit var map: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-
+    val db = Firebase.firestore
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -54,6 +56,65 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         map = googleMap
         enableMyLocation()
         moveCameraToCurrentLocation()
+        addPostMarkers(map,1.0)
+    }
+    private fun addPostMarkers(googleMap: GoogleMap, threshold: Double) {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                REQUEST_LOCATION_PERMISSION
+            )
+            return
+        }
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location ->
+                location?.let {
+                    val currentLatLng = LatLng(it.latitude, it.longitude)
+                    // Límite para no obtener todos los posts, pensando en un futuro número muy alto
+                    val lowerLat = currentLatLng.latitude - threshold
+                    val upperLat = currentLatLng.latitude + threshold
+                    val lowerLon = currentLatLng.longitude - threshold
+                    val upperLon = currentLatLng.longitude + threshold
+
+                    // Firebase no deja utilizar más de un atributo para filtrar, así que solo hace latitud
+                    db.collection("posts")
+                        .whereGreaterThanOrEqualTo("latitude", lowerLat)
+                        .whereLessThanOrEqualTo("latitude", upperLat)
+                        .get()
+                        .addOnSuccessListener { result ->
+                            for (document in result) {
+                                val postLatitude = document.getDouble("latitude") ?: continue
+                                val postLongitude = document.getDouble("longitude") ?: continue
+
+                                // Aquí filtramos dentro del cliente en longitud
+                                if (postLongitude in lowerLon..upperLon) {
+                                    val postLocation = LatLng(postLatitude, postLongitude)
+                                    googleMap.addMarker(MarkerOptions().position(postLocation).title("Post: ${document.id}"))
+                                }
+                            }
+                        }
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(
+                    requireContext(),
+                    "Error obteniendo ubicación actual: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
+
     }
 
     private fun enableMyLocation() {
