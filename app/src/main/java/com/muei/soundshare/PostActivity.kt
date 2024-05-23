@@ -25,6 +25,7 @@ import com.muei.soundshare.databinding.ActivityPostBinding
 import com.muei.soundshare.databinding.LayoutSongBinding
 import com.muei.soundshare.ui.search.SearchViewModel
 import com.muei.soundshare.util.SongAdapter
+import java.time.LocalDate
 import java.util.Date
 
 class PostActivity : AppCompatActivity() {
@@ -38,14 +39,13 @@ class PostActivity : AppCompatActivity() {
 
     val db = Firebase.firestore
     val post = hashMapOf(
-        "postId" to 0,
         "userId" to 0,
         "songId" to 0,
         "content" to "Mi primer post",
         "dateTime" to Date.UTC(2024, 2, 3, 12, 30, 0),
         "latitude" to 40.416775 as Any,
         "longitude" to -3.703790 as Any,
-        "likes" to "Manuel, Miguel y María"
+        "likes" to ""
     )
 
 
@@ -80,7 +80,7 @@ class PostActivity : AppCompatActivity() {
                 binding.editText.isEnabled = true // Habilitar el EditText
                 binding.buttonPost.isEnabled = true // Habilitar el botón "Post"
 
-
+                post["songId"] = songId
             }
         }
 
@@ -100,7 +100,6 @@ class PostActivity : AppCompatActivity() {
         val locationEnabled = sharedPreferences.getBoolean("ubicacion", false)
 
         binding.switchLocation.isChecked = locationEnabled
-
         binding.switchLocation.isEnabled = locationEnabled
         val onCheckedChangeListener = CompoundButton.OnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -143,41 +142,6 @@ class PostActivity : AppCompatActivity() {
 
         // Llamamos al listener manualmente una vez por si el usuario ha dejado activada la ubicación
         onCheckedChangeListener.onCheckedChanged(binding.switchLocation, binding.switchLocation.isChecked)
-//        binding.switchLocation.setOnCheckedChangeListener { _, isChecked ->
-//            if (isChecked) {
-//                Log.d("SoundShare", "Location on")
-//                binding.switchLocation.setThumbIconResource(R.drawable.ic_location_on)
-//
-//                if (ActivityCompat.checkSelfPermission(
-//                        this,
-//                        Manifest.permission.ACCESS_FINE_LOCATION
-//                    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-//                        this,
-//                        Manifest.permission.ACCESS_COARSE_LOCATION
-//                    ) != PackageManager.PERMISSION_GRANTED
-//                ) {
-//                    // TODO: Consider calling
-//                    //    ActivityCompat#requestPermissions
-//                    // here to request the missing permissions, and then overriding
-//                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//                    //                                          int[] grantResults)
-//                    // to handle the case where the user grants the permission. See the documentation
-//                    // for ActivityCompat#requestPermissions for more details.
-//                }
-//                fusedLocationClient.lastLocation
-//                    .addOnSuccessListener { location ->
-//                        location?.let {
-//                            val latLng = LatLng(it.latitude, it.longitude)
-//                            post["latitude"] = latLng.latitude
-//                            post["longitude"] = latLng.longitude
-//                        }
-//                    }
-//            } else {
-//                Log.d("SoundShare", "Location off")
-//                binding.switchLocation.setThumbIconResource(R.drawable.ic_location_off)
-//            }
-//        }
-//        onCheckedChangeListener.onCheckedChanged(binding.switchLocation, binding.switchLocation.isChecked)
 
         binding.searchView.setupWithSearchBar(binding.searchBar)
         binding.searchView.editText.addTextChangedListener(object : TextWatcher {
@@ -199,6 +163,8 @@ class PostActivity : AppCompatActivity() {
 
         binding.buttonPost.setOnClickListener {
             Log.d("SoundShare", "Post button clicked")
+            post["dateTime"]= LocalDate.now()
+            post["content"]=binding.editText.text.toString()
             db.collection("posts").add(post)
                 .addOnSuccessListener { documentReference ->
                     Log.d("SoundShare", "DocumentSnapshot added with ID: ${documentReference.id}")
