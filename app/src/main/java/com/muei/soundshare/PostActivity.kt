@@ -10,11 +10,13 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.CompoundButton
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.Firebase
@@ -60,6 +62,7 @@ class PostActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         selectedSongLayout = LayoutSongBinding.bind(findViewById(R.id.selectedSongLayout))
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
 
         binding.recyclerSongs.layoutManager =
@@ -92,15 +95,14 @@ class PostActivity : AppCompatActivity() {
 
         binding.recyclerSongs.adapter = songAdapter
 
-        sharedPreferences = getSharedPreferences("ubicacion", MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences("com.muei.soundshare", MODE_PRIVATE)
 
-        val locationEnabled = sharedPreferences.getBoolean("location_enabled", false)
+        val locationEnabled = sharedPreferences.getBoolean("ubicacion", false)
 
         binding.switchLocation.isChecked = locationEnabled
 
         binding.switchLocation.isEnabled = locationEnabled
-
-        binding.switchLocation.setOnCheckedChangeListener { _, isChecked ->
+        val onCheckedChangeListener = CompoundButton.OnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 Log.d("SoundShare", "Location on")
                 binding.switchLocation.setThumbIconResource(R.drawable.ic_location_on)
@@ -120,7 +122,9 @@ class PostActivity : AppCompatActivity() {
                     //                                          int[] grantResults)
                     // to handle the case where the user grants the permission. See the documentation
                     // for ActivityCompat#requestPermissions for more details.
+                    return@OnCheckedChangeListener
                 }
+
                 fusedLocationClient.lastLocation
                     .addOnSuccessListener { location ->
                         location?.let {
@@ -134,6 +138,46 @@ class PostActivity : AppCompatActivity() {
                 binding.switchLocation.setThumbIconResource(R.drawable.ic_location_off)
             }
         }
+
+        binding.switchLocation.setOnCheckedChangeListener(onCheckedChangeListener)
+
+        // Llamamos al listener manualmente una vez por si el usuario ha dejado activada la ubicación
+        onCheckedChangeListener.onCheckedChanged(binding.switchLocation, binding.switchLocation.isChecked)
+//        binding.switchLocation.setOnCheckedChangeListener { _, isChecked ->
+//            if (isChecked) {
+//                Log.d("SoundShare", "Location on")
+//                binding.switchLocation.setThumbIconResource(R.drawable.ic_location_on)
+//
+//                if (ActivityCompat.checkSelfPermission(
+//                        this,
+//                        Manifest.permission.ACCESS_FINE_LOCATION
+//                    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+//                        this,
+//                        Manifest.permission.ACCESS_COARSE_LOCATION
+//                    ) != PackageManager.PERMISSION_GRANTED
+//                ) {
+//                    // TODO: Consider calling
+//                    //    ActivityCompat#requestPermissions
+//                    // here to request the missing permissions, and then overriding
+//                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//                    //                                          int[] grantResults)
+//                    // to handle the case where the user grants the permission. See the documentation
+//                    // for ActivityCompat#requestPermissions for more details.
+//                }
+//                fusedLocationClient.lastLocation
+//                    .addOnSuccessListener { location ->
+//                        location?.let {
+//                            val latLng = LatLng(it.latitude, it.longitude)
+//                            post["latitude"] = latLng.latitude
+//                            post["longitude"] = latLng.longitude
+//                        }
+//                    }
+//            } else {
+//                Log.d("SoundShare", "Location off")
+//                binding.switchLocation.setThumbIconResource(R.drawable.ic_location_off)
+//            }
+//        }
+//        onCheckedChangeListener.onCheckedChanged(binding.switchLocation, binding.switchLocation.isChecked)
 
         binding.searchView.setupWithSearchBar(binding.searchBar)
         binding.searchView.editText.addTextChangedListener(object : TextWatcher {
@@ -186,5 +230,7 @@ class PostActivity : AppCompatActivity() {
                     dialog.dismiss()
                 }.show()
         }
+
     }
+
 }
