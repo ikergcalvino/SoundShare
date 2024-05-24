@@ -41,7 +41,8 @@ class PostActivity : AppCompatActivity() {
         "songId" to 0,
         "content" to "Mi primer post",
         "dateTime" to Date.UTC(2024, 2, 3, 12, 30, 0),
-        "location" to "A Coruña",
+        "latitude" to 40.416775 as Any,
+        "longitude" to -3.703790 as Any,
         "likes" to "Manuel, Miguel y María"
     )
 
@@ -123,7 +124,9 @@ class PostActivity : AppCompatActivity() {
                 fusedLocationClient.lastLocation
                     .addOnSuccessListener { location ->
                         location?.let {
-                            LatLng(it.latitude, it.longitude)
+                            val latLng = LatLng(it.latitude, it.longitude)
+                            post["latitude"] = latLng.latitude
+                            post["longitude"] = latLng.longitude
                         }
                     }
             } else {
