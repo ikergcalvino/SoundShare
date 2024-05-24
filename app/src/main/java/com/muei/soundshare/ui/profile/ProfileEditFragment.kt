@@ -12,8 +12,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.firestore
 import com.muei.soundshare.MainActivity
 import com.muei.soundshare.R
 import com.muei.soundshare.databinding.FragmentProfileEditBinding
@@ -28,6 +32,8 @@ class ProfileEditFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var auth: FirebaseAuth
+
+    val db = Firebase.firestore
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -45,17 +51,51 @@ class ProfileEditFragment : Fragment() {
             val password = binding.textPassword.text.toString()
             val phoneNumber = binding.textPhoneNumber.text.toString()
             val dateOfBirth = binding.textDateOfBirth.text.toString()
+            val currentUserEmail = currentUser!!.email
 
             if (validatefields()) {
+                var bool = true
                 if (password.isNotEmpty()){
-                    currentUser!!.updatePassword(password).addOnCompleteListener { task ->
+                    currentUser.updatePassword(password).addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             Log.d("SoundShare", "Password updated")
                         } else {
                             Log.d("SoundShare", "Password not updated")
+                            bool = false
                         }
                     }
                 }
+                if (phoneNumber.isNotEmpty()){
+                    db.collection("users").document(currentUserEmail!!).update(
+                        mapOf(
+                            "phoneNumber" to phoneNumber
+                        )
+                    ).addOnSuccessListener {
+                        Log.d("SoundShare", "DocumentSnapshot successfully updated!")
+                    }.addOnFailureListener { e ->
+                        Log.w("SoundShare", "Error updating document", e)
+                        bool = false
+                    }
+                }
+
+                if (dateOfBirth.isNotEmpty()) {
+                    db.collection("users").document(currentUserEmail!!).update(
+                        mapOf(
+                            "dateOfBirth" to dateOfBirth
+                        )
+                    ).addOnSuccessListener {
+                        Log.d("SoundShare", "DocumentSnapshot successfully updated!")
+                    }.addOnFailureListener { e ->
+                        Log.w("SoundShare", "Error updating document", e)
+                        bool = false
+                    }
+
+                }
+                if (bool)
+                    Toast.makeText(requireContext(), getString(R.string.profile_updated), Toast.LENGTH_LONG).show()
+                else
+                    Toast.makeText(requireContext(), getString(R.string.profile_not_updated), Toast.LENGTH_LONG).show()
+                findNavController().navigateUp()
             }
         }
 
@@ -95,7 +135,7 @@ class ProfileEditFragment : Fragment() {
         val green = 119
         val blue = 113
 
-        if (password.length < 8) {
+        if (password.isNotEmpty() and (password.length < 8)) {
             Toast.makeText(requireContext(), getString(R.string.password_length), Toast.LENGTH_SHORT).show()
             binding.textPassword.setBackgroundColor(Color.rgb(red, green, blue))
             return false

@@ -13,6 +13,9 @@
     <string name="passwords_dont_match">Passwords don\'t match</string>
     <string name="date_of_birth_required">Date of birth is required</string>
 
+    <string name="profile_updated">User data updated</string>
+    <string name="profile_not_updated">User data couldn\'t be updated</string>
+
     <string name="already_have_an_account">Already have an account?</string>
     <string name="artist_name">Artist name</string>
     <string name="cancel">Cancel</string>
