@@ -77,7 +77,8 @@ class SignupActivity : AppCompatActivity() {
                     "email" to email,
                     "username" to username,
                     "dateOfBirth" to dateOfBirth,
-                    "phoneNumber" to phoneNumber
+                    "phoneNumber" to phoneNumber,
+                    "profileImage" to ""
                 )
 
                 val userDocRef = db.collection("users").document(email)

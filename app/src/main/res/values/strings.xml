@@ -60,4 +60,5 @@
     <string name="age_restriction">You must be over 18</string>
     <string name="bot_n_para_buscar_canciones_con_shazam">Search button with Shazam</string>
     <string name="log_out_button">Log out</string>
+    <string name="upload_image">Upload profile image</string>
 </resources>
