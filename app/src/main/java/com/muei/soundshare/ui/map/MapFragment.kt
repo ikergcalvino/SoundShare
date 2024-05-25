@@ -3,6 +3,7 @@ package com.muei.soundshare.ui.map
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.muei.soundshare.R
 import com.muei.soundshare.databinding.FragmentMapBinding
 import com.google.firebase.Firebase
@@ -86,6 +88,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     val upperLat = currentLatLng.latitude + threshold
                     val lowerLon = currentLatLng.longitude - threshold
                     val upperLon = currentLatLng.longitude + threshold
+                    googleMap.setInfoWindowAdapter(CustomInfoWindowAdapter(layoutInflater))
 
                     // Firebase no deja utilizar más de un atributo para filtrar, así que solo hace latitud
                     db.collection("posts")
@@ -100,7 +103,19 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                                 // Aquí filtramos dentro del cliente en longitud
                                 if (postLongitude in lowerLon..upperLon) {
                                     val postLocation = LatLng(postLatitude, postLongitude)
-                                    googleMap.addMarker(MarkerOptions().position(postLocation).title("Post: ${document.id}"))
+                                    val marker = googleMap.addMarker(
+                                        MarkerOptions()
+                                            .position(postLocation)
+                                            .title("Post: ${document.id}")
+                                    )
+                                    val content = document.getString("content") ?: continue
+                                    val songId = document.getString("songId") ?: continue
+                                    marker?.tag = CustomInfoWindowAdapter.PostInfo(content,songId)
+                                    googleMap.setOnMarkerClickListener { marker ->
+                                        marker.showInfoWindow()
+                                        true
+                                    }
+
                                 }
                             }
                         }
@@ -172,7 +187,15 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 ).show()
             }
     }
-
+//    private fun showPostInfoDialog(postInfo: CustomInfoWindowAdapter.PostInfo) {
+//        MaterialAlertDialogBuilder(requireContext())
+//            .setTitle("Post Info")
+//            .setMessage("Content: ${postInfo.content}\nSong ID: ${postInfo.songId}")
+//            .setPositiveButton("OK") { dialog, _ ->
+//                dialog.dismiss()
+//            }
+//            .show()
+//    }
     companion object {
         private const val REQUEST_LOCATION_PERMISSION = 1
     }
