@@ -111,10 +111,16 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                                     val content = document.getString("content") ?: continue
                                     val songId = document.getString("songId") ?: continue
                                     marker?.tag = CustomInfoWindowAdapter.PostInfo(content,songId)
-                                    googleMap.setOnMarkerClickListener { marker ->
-                                        marker.showInfoWindow()
-                                        true
-                                    }
+//                                    googleMap.setOnMarkerClickListener { marker ->
+//                                        marker.showInfoWindow()
+//                                        true
+//                                    }
+//                                    googleMap.setOnInfoWindowClickListener { marker ->
+//                                        val postInfo = marker.tag as? CustomInfoWindowAdapter.PostInfo
+//                                        postInfo?.let {
+//                                            showPostInfoDialog(it)
+//                                        }
+//                                    }
 
                                 }
                             }
