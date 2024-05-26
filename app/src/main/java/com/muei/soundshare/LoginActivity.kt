@@ -18,13 +18,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
     private lateinit var loadingOverlay: View
 
-    private lateinit var auth: FirebaseAuth
+    private val firebaseAuth: FirebaseAuth by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,15 +35,13 @@ class LoginActivity : AppCompatActivity() {
 
         loadingOverlay = findViewById(R.id.loadingOverlay)
 
-        auth = FirebaseAuth.getInstance()
-
         binding.buttonLogIn.setOnClickListener {
             Log.d("SoundShare", "Log in button clicked")
 
             val email = binding.textEmail.text.toString()
             val password = binding.textPassword.text.toString()
             if (validateFields()) {
-                auth.signInWithEmailAndPassword(email, password)
+                firebaseAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this) { task ->
                         if (task.isSuccessful) {
                             CoroutineScope(Dispatchers.Main).launch {
@@ -128,40 +127,41 @@ class LoginActivity : AppCompatActivity() {
         }
         return true
     }
-        // TODO: Abstraer
-        private fun firebaseAuthWithGoogle(idToken: String) {
-            val credential = GoogleAuthProvider.getCredential(idToken, null)
-            auth.signInWithCredential(credential)
-                .addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful) {
-                        // Inicio de sesión exitoso, actualizar UI con la información del usuario firmado
-                        Log.d("SoundShare", "signInWithCredential:success")
-                        val user = auth.currentUser
-                        // ...
-                    } else {
-                        // Si el inicio de sesión falla, mostrar un mensaje al usuario
-                        Log.w("SoundShare", "signInWithCredential:failure", task.exception)
-                        // ...
-                    }
+
+    // TODO: Abstraer
+    private fun firebaseAuthWithGoogle(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        firebaseAuth.signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Inicio de sesión exitoso, actualizar UI con la información del usuario firmado
+                    Log.d("SoundShare", "signInWithCredential:success")
+                    val user = firebaseAuth.currentUser
+                    // ...
+                } else {
+                    // Si el inicio de sesión falla, mostrar un mensaje al usuario
+                    Log.w("SoundShare", "signInWithCredential:failure", task.exception)
+                    // ...
                 }
-        }
-
-        public override fun onStart() {
-            super.onStart()
-            // Check if user is signed in (non-null) and update UI accordingly.
-            val currentUser = auth.currentUser
-            if (currentUser != null) {
-                val mainIntent = Intent(this@LoginActivity, MainActivity::class.java)
-                startActivity(mainIntent)
-                finish()
             }
-        }
+    }
 
-        private fun showLoading(show: Boolean) {
-            if (show) {
-                loadingOverlay.visibility = View.VISIBLE
-            } else {
-                loadingOverlay.visibility = View.GONE
-            }
+    public override fun onStart() {
+        super.onStart()
+        // Check if user is signed in (non-null) and update UI accordingly.
+        val currentUser = firebaseAuth.currentUser
+        if (currentUser != null) {
+            val mainIntent = Intent(this@LoginActivity, MainActivity::class.java)
+            startActivity(mainIntent)
+            finish()
         }
     }
+
+    private fun showLoading(show: Boolean) {
+        if (show) {
+            loadingOverlay.visibility = View.VISIBLE
+        } else {
+            loadingOverlay.visibility = View.GONE
+        }
+    }
+}

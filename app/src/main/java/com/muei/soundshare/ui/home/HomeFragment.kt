@@ -1,20 +1,19 @@
 package com.muei.soundshare.ui.home
 
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.muei.soundshare.databinding.FragmentHomeBinding
+import com.muei.soundshare.entities.Post
+import com.muei.soundshare.util.ItemClickListener
 import com.muei.soundshare.util.PostAdapter
 
-@RequiresApi(Build.VERSION_CODES.O)
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), ItemClickListener<Post> {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -30,7 +29,7 @@ class HomeFragment : Fragment() {
 
         binding.recyclerHome.layoutManager = LinearLayoutManager(requireContext())
 
-        postAdapter = PostAdapter(homeViewModel.getPosts())
+        postAdapter = PostAdapter(homeViewModel.getPosts(), this)
 
         binding.recyclerHome.adapter = postAdapter
 
@@ -56,5 +55,14 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onItemClick(item: Post) {
+    }
+
+    override fun onAddFriendButtonClick(item: Post) {
+    }
+
+    override fun onRemoveSongButtonClick(item: Post) {
     }
 }

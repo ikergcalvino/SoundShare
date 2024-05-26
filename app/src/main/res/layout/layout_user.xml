@@ -1,31 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="8dp">
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/user_image"
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:layout_margin="8dp"
-        android:src="@drawable/ic_account_circle" />
+        android:layout_margin="4dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/user_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_account_circle" />
+
+    </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/user_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@string/username" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/user_add"
-        style="@style/Widget.Material3.Button.IconButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        app:icon="@drawable/ic_add_circle" />
+        android:layout_margin="4dp"
+        android:text="@string/username"
+        android:textStyle="bold|italic" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_add_friend"
+        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:text="@string/add_friend"
+        android:visibility="gone"
+        app:icon="@drawable/ic_person_add" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_remove_friend"
+        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:text="@string/remove_friend"
+        android:visibility="gone"
+        app:icon="@drawable/ic_person_remove" />
 
 </LinearLayout>

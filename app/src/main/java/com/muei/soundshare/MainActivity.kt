@@ -13,7 +13,6 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.firebase.auth.FirebaseAuth
 import com.muei.soundshare.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -51,14 +50,12 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_profile -> {
                     topNav.subtitle = destination.label
                     binding.buttonShazam.visibility = View.GONE
-                    binding.buttonLogOut.visibility = View.VISIBLE
                     topNav.menu.clear()
                 }
 
                 R.id.navigation_edit_profile -> {
                     topNav.subtitle = destination.label
                     binding.buttonShazam.visibility = View.GONE
-                    binding.buttonLogOut.visibility = View.GONE
                     topNav.menu.clear()
                 }
 
@@ -69,7 +66,6 @@ class MainActivity : AppCompatActivity() {
                         topNav.inflateMenu(R.menu.top_nav_menu)
                     }
                     binding.buttonShazam.visibility = View.VISIBLE
-                    binding.buttonLogOut.visibility = View.GONE
                 }
             }
         }
@@ -122,14 +118,6 @@ class MainActivity : AppCompatActivity() {
 
                 else -> false
             }
-        }
-
-        binding.buttonLogOut.setOnClickListener {
-            Log.d("SoundShare", "Log out button clicked")
-            FirebaseAuth.getInstance().signOut()
-            val mainIntent = Intent(this@MainActivity, LoginActivity::class.java)
-            startActivity(mainIntent)
-            finish()
         }
 
         binding.buttonShazam.setOnClickListener {

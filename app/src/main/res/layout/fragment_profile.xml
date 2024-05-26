@@ -16,19 +16,29 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="horizontal"
-            android:padding="16dp">
+            android:padding="8dp">
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/profile_image"
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="128dp"
                 android:layout_height="128dp"
-                android:src="@drawable/ic_account_circle" />
+                android:layout_gravity="center"
+                android:layout_margin="8dp">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/profile_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_account_circle" />
+
+            </com.google.android.material.card.MaterialCardView>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="vertical">
+
+                <include layout="@layout/layout_song" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_friends"
@@ -38,13 +48,12 @@
                     android:text="@string/friends"
                     app:cornerRadius="4dp" />
 
-                <include layout="@layout/layout_song" />
-
             </LinearLayout>
 
         </LinearLayout>
 
         <com.google.android.material.textview.MaterialTextView
+            style="@style/TextAppearance.Material3.HeadlineLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
@@ -58,15 +67,26 @@
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/button_edit"
-        style="?attr/floatingActionButtonLargeStyle"
+        android:id="@+id/button_log_out"
+        style="?attr/floatingActionButtonSmallSecondaryStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:contentDescription="TODO"
-        app:fabCustomSize="64dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/button_edit"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_edit" />
+        app:srcCompat="@drawable/ic_door_open" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/button_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:contentDescription="TODO"
+        android:text="@string/edit_profile"
+        app:fabCustomSize="64dp"
+        app:icon="@drawable/ic_edit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

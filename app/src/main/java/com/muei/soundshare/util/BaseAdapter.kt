@@ -9,6 +9,7 @@ import com.muei.soundshare.R
 
 abstract class BaseAdapter<T>(
     private val items: List<T>,
+    private val clickListener: ItemClickListener<T>?,
     private val layoutResId: Int
 ) : RecyclerView.Adapter<BaseAdapter<T>.BaseViewHolder>() {
 
@@ -26,18 +27,24 @@ abstract class BaseAdapter<T>(
         bindItem(holder.itemView, item)
 
         holder.itemView.setOnClickListener {
-            onItemClick(item)
+            clickListener?.onItemClick(item)
         }
 
-        val addButton: MaterialButton? = holder.itemView.findViewById(R.id.user_add)
+        val addFriendButton: MaterialButton? =
+            holder.itemView.findViewById(R.id.button_add_friend)
 
-        addButton?.setOnClickListener {
-            onAddButtonClick(item)
+        addFriendButton?.setOnClickListener {
+            clickListener?.onAddFriendButtonClick(item)
+        }
+
+        val removeSongButton: MaterialButton? =
+            holder.itemView.findViewById(R.id.button_remove_song)
+
+        removeSongButton?.setOnClickListener {
+            clickListener?.onRemoveSongButtonClick(item)
         }
     }
 
     abstract fun bindItem(view: View, item: T)
 
-    abstract fun onItemClick(item: T)
-    abstract fun onAddButtonClick(item: T)
 }

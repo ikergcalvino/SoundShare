@@ -12,29 +12,27 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.firestore
 import com.muei.soundshare.databinding.ActivitySignupBinding
 import com.muei.soundshare.util.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
+import org.koin.android.ext.android.inject
 
 class SignupActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignupBinding
     private lateinit var loadingOverlay: View
 
-    private lateinit var auth: FirebaseAuth
-
+    private val firebaseAuth: FirebaseAuth by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        auth = FirebaseAuth.getInstance()
 
         val db = Firebase.firestore
 
@@ -74,7 +72,7 @@ class SignupActivity : AppCompatActivity() {
                     "phoneNumber" to phoneNumber
                 )
 
-                auth.createUserWithEmailAndPassword(email, password)
+                firebaseAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this) { task ->
                         if (task.isSuccessful) {
                             CoroutineScope(Dispatchers.Main).launch {
@@ -83,7 +81,10 @@ class SignupActivity : AppCompatActivity() {
                                 db.collection("users")
                                     .add(user)
                                     .addOnSuccessListener { documentReference ->
-                                        Log.d("SoundShare", "DocumentSnapshot added with ID: ${documentReference.id}")
+                                        Log.d(
+                                            "SoundShare",
+                                            "DocumentSnapshot added with ID: ${documentReference.id}"
+                                        )
                                     }
                                     .addOnFailureListener { e ->
                                         Log.w("SoundShare", "Error adding document", e)
@@ -150,12 +151,12 @@ class SignupActivity : AppCompatActivity() {
     // TODO: Abstraer
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
-        auth.signInWithCredential(credential)
+        firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Inicio de sesión exitoso, actualizar UI con la información del usuario firmado
                     Log.d("SoundShare", "signInWithCredential:success")
-                    val user = auth.currentUser
+                    val user = firebaseAuth.currentUser
                     // ...
                 } else {
                     // Si el inicio de sesión falla, mostrar un mensaje al usuario
@@ -248,7 +249,7 @@ class SignupActivity : AppCompatActivity() {
     public override fun onStart() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = auth.currentUser
+        val currentUser = firebaseAuth.currentUser
         if (currentUser != null) {
             val mainIntent = Intent(this@SignupActivity, MainActivity::class.java)
             startActivity(mainIntent)

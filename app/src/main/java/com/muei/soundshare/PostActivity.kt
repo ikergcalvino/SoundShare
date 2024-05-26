@@ -1,167 +1,119 @@
 package com.muei.soundshare
 
-import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
-import android.os.Build
+import android.location.LocationManager
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
+import android.provider.Settings
 import android.util.Log
 import android.view.View
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.maps.model.LatLng
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
+import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.firestore.FirebaseFirestore
 import com.muei.soundshare.databinding.ActivityPostBinding
 import com.muei.soundshare.databinding.LayoutSongBinding
-import com.muei.soundshare.ui.search.SearchViewModel
+import com.muei.soundshare.entities.Song
+import com.muei.soundshare.util.Constants
+import com.muei.soundshare.util.ItemClickListener
 import com.muei.soundshare.util.SongAdapter
-import java.util.Date
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class PostActivity : AppCompatActivity() {
+class PostActivity : AppCompatActivity(), ItemClickListener<Song>, KoinComponent {
 
     private lateinit var binding: ActivityPostBinding
-    private lateinit var songAdapter: SongAdapter
+    private lateinit var selectedSong: Song
     private lateinit var selectedSongLayout: LayoutSongBinding
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var sharedPreferences: SharedPreferences
 
+    private val firebaseFirestore: FirebaseFirestore by inject()
+    private val spotifyClient: SpotifyClient by inject()
+    private val sharedPreferences: SharedPreferences by inject()
 
-    val db = Firebase.firestore
-    val post = hashMapOf(
-        "postId" to 0,
-        "userId" to 0,
-        "songId" to 0,
-        "content" to "Mi primer post",
-        "dateTime" to Date.UTC(2024, 2, 3, 12, 30, 0),
-        "latitude" to 40.416775 as Any,
-        "longitude" to -3.703790 as Any,
-        "likes" to "Manuel, Miguel y María"
-    )
+    private var postLocation: Boolean = false
 
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private val searchViewModel =
-        SearchViewModel()
-    private var selectedSongId: String? = null
-
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityPostBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        selectedSongLayout = LayoutSongBinding.bind(findViewById(R.id.selectedSongLayout))
-
-
-        binding.recyclerSongs.layoutManager =
-            LinearLayoutManager(this)
-
-        songAdapter = SongAdapter(searchViewModel.getSongs()) { songId ->
-            selectedSongId = songId
-            val selectedSong = searchViewModel.getSongById(selectedSongId!!)
-            if (selectedSong != null) {
-                selectedSongLayout.songName.text = selectedSong.title
-                selectedSongLayout.artistName.text = selectedSong.artist
-                selectedSongLayout.buttonRemoveSong.visibility = View.VISIBLE
-                selectedSongLayout.root.visibility = View.VISIBLE
-                binding.searchView.visibility = View.GONE
-                binding.editText.isEnabled = true // Habilitar el EditText
-                binding.buttonPost.isEnabled = true // Habilitar el botón "Post"
-
-
-            }
+        if (sharedPreferences.getBoolean(Constants.LOCATION, false)) {
+            postLocation = true
+            binding.switchLocation.setChecked(true)
+            binding.switchLocation.setThumbIconResource(R.drawable.ic_location_on)
+        } else {
+            postLocation = false
+            binding.switchLocation.setChecked(false)
+            binding.switchLocation.setThumbIconResource(R.drawable.ic_location_off)
         }
-
-        selectedSongLayout.buttonRemoveSong.setOnClickListener {
-            selectedSongLayout.root.visibility = View.GONE
-            binding.searchView.visibility = View.VISIBLE
-            binding.editText.isEnabled = false // Deshabilitar el EditText
-            binding.buttonPost.isEnabled = false // Deshabilitar el botón "Post"
-
-
-        }
-
-        binding.recyclerSongs.adapter = songAdapter
-
-        sharedPreferences = getSharedPreferences("ubicacion", MODE_PRIVATE)
-
-        val locationEnabled = sharedPreferences.getBoolean("location_enabled", false)
-
-        binding.switchLocation.isChecked = locationEnabled
-
-        binding.switchLocation.isEnabled = locationEnabled
 
         binding.switchLocation.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                Log.d("SoundShare", "Location on")
-                binding.switchLocation.setThumbIconResource(R.drawable.ic_location_on)
+                val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                val isLocationEnabled =
+                    locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
 
-                if (ActivityCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
+                if (!isLocationEnabled) {
+
+                    MaterialAlertDialogBuilder(this).setTitle("Activar Ubicación")
+                        .setMessage("Tu ubicación está desactivada. ¿Quieres activarla ahora?")
+                        .setPositiveButton("Activar") { _, _ ->
+                            startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                        }.setNegativeButton("Cancelar") { _, _ ->
+                            binding.switchLocation.setChecked(false)
+                        }.setOnCancelListener {
+                            binding.switchLocation.setChecked(false)
+                        }.show()
+
+                } else {
+                    Log.d("SoundShare", "Location on")
+                    binding.switchLocation.setThumbIconResource(R.drawable.ic_location_on)
+                    postLocation = true
                 }
-                fusedLocationClient.lastLocation
-                    .addOnSuccessListener { location ->
-                        location?.let {
-                            val latLng = LatLng(it.latitude, it.longitude)
-                            post["latitude"] = latLng.latitude
-                            post["longitude"] = latLng.longitude
-                        }
-                    }
             } else {
                 Log.d("SoundShare", "Location off")
                 binding.switchLocation.setThumbIconResource(R.drawable.ic_location_off)
+                postLocation = false
             }
         }
 
-        binding.searchView.setupWithSearchBar(binding.searchBar)
-        binding.searchView.editText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(
-                s: CharSequence?,
-                start: Int,
-                count: Int,
-                after: Int
-            ) {
-            }
+        binding.selectSong.setOnClickListener {
+            val songSearchView: View =
+                this.layoutInflater.inflate(R.layout.layout_song_search, null)
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val query = s.toString()
-                songAdapter.filter(query)
-            }
+            val textTrackName = songSearchView.findViewById<TextInputEditText>(R.id.text_track_name)
 
-            override fun afterTextChanged(s: Editable?) {}
-        })
+            val songResultView: View =
+                this.layoutInflater.inflate(R.layout.layout_song_result, null)
+
+            val resultDialog =
+                MaterialAlertDialogBuilder(this).setView(songResultView).setTitle("Search Results")
+                    .setPositiveButton("OK", null).create()
+
+            val searchDialog =
+                MaterialAlertDialogBuilder(this).setView(songSearchView).setTitle("Song Search")
+                    .setPositiveButton("Search") { _, _ ->
+                        spotifyClient.searchSongs(textTrackName.text.toString()) { songs ->
+                            runOnUiThread {
+                                val recyclerView =
+                                    songResultView.findViewById<RecyclerView>(R.id.recycler_songs)
+                                recyclerView.layoutManager = LinearLayoutManager(this)
+                                recyclerView.adapter = SongAdapter(songs, this)
+                            }
+                        }
+                        resultDialog.show()
+                    }.setNegativeButton("Cancel", null).create()
+
+            searchDialog.show()
+        }
 
         binding.buttonPost.setOnClickListener {
             Log.d("SoundShare", "Post button clicked")
-            db.collection("posts").add(post)
-                .addOnSuccessListener { documentReference ->
-                    Log.d("SoundShare", "DocumentSnapshot added with ID: ${documentReference.id}")
-                }
-                .addOnFailureListener { e ->
-                    Log.w("SoundShare", "Error adding document", e)
-                }
+
             // ContentService para la publicación asíncrona
 
             val mainIntent = Intent(this@PostActivity, MainActivity::class.java)
@@ -173,6 +125,7 @@ class PostActivity : AppCompatActivity() {
 
         binding.topNav.setNavigationOnClickListener {
             Log.d("SoundShare", "Back button clicked")
+
             MaterialAlertDialogBuilder(this).setTitle("Confirmación")
                 .setMessage("¿Estás seguro de que quieres salir? Se perderán los datos del post.")
                 .setPositiveButton("Sí") { dialog, _ ->
@@ -185,6 +138,18 @@ class PostActivity : AppCompatActivity() {
                 }.setNegativeButton("Cancelar") { dialog, _ ->
                     dialog.dismiss()
                 }.show()
+
         }
     }
+
+    override fun onItemClick(item: Song) {
+        println(item)
+    }
+
+    override fun onAddFriendButtonClick(item: Song) {
+    }
+
+    override fun onRemoveSongButtonClick(item: Song) {
+    }
+
 }
