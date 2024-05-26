@@ -1,5 +1,11 @@
 package com.muei.soundshare
 
+/*import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
+import com.google.api.client.http.javanet.NetHttpTransport
+import com.google.api.client.json.gson.GsonFactory
+import com.google.api.services.people.v1.PeopleService
+import com.google.api.services.people.v1.model.Person
+import com.google.api.services.people.v1.PeopleServiceRequestInitializer*/
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -69,39 +75,58 @@ class SignupActivity : AppCompatActivity() {
                     "email" to email,
                     "username" to username,
                     "dateOfBirth" to dateOfBirth,
-                    "phoneNumber" to phoneNumber
+                    "phoneNumber" to phoneNumber,
+                    "profileImage" to ""
                 )
 
-                firebaseAuth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(this) { task ->
-                        if (task.isSuccessful) {
-                            CoroutineScope(Dispatchers.Main).launch {
-                                delay(2000)
-                                showLoading(true)
-                                db.collection("users")
-                                    .add(user)
-                                    .addOnSuccessListener { documentReference ->
-                                        Log.d(
-                                            "SoundShare",
-                                            "DocumentSnapshot added with ID: ${documentReference.id}"
-                                        )
-                                    }
-                                    .addOnFailureListener { e ->
-                                        Log.w("SoundShare", "Error adding document", e)
-                                    }
-                                val mainIntent =
-                                    Intent(this@SignupActivity, MainActivity::class.java)
-                                startActivity(mainIntent)
-                                finish()
-                            }
-                        } else {
+                val userDocRef = db.collection("users").document(email)
+                userDocRef.get().addOnCompleteListener { docTask ->
+                    if (docTask.isSuccessful) {
+                        val document = docTask.result
+                        if (document.exists()) {
                             Toast.makeText(
                                 baseContext,
-                                "Sign up failed.",
+                                "Username already exists.",
                                 Toast.LENGTH_LONG,
                             ).show()
+                        } else {
+
+                            firebaseAuth.createUserWithEmailAndPassword(email, password)
+                                .addOnCompleteListener(this) { task ->
+                                    if (task.isSuccessful) {
+                                        CoroutineScope(Dispatchers.Main).launch {
+                                            delay(2000)
+                                            showLoading(true)
+                                            db.collection("users")
+                                                .document(email).set(user)
+                                                .addOnSuccessListener { documentReference ->
+                                                    Log.d(
+                                                        "SoundShare",
+                                                        "DocumentSnapshot added with ID: $email"
+                                                    )
+                                                }
+                                                .addOnFailureListener { e ->
+                                                    Log.w("SoundShare", "Error adding document", e)
+                                                }
+                                            val mainIntent =
+                                                Intent(
+                                                    this@SignupActivity,
+                                                    MainActivity::class.java
+                                                )
+                                            startActivity(mainIntent)
+                                            finish()
+                                        }
+                                    } else {
+                                        Toast.makeText(
+                                            baseContext,
+                                            "Sign up failed.",
+                                            Toast.LENGTH_LONG,
+                                        ).show()
+                                    }
+                                }
                         }
                     }
+                }
             }
         }
 
@@ -148,7 +173,6 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-    // TODO: Abstraer
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         firebaseAuth.signInWithCredential(credential)
@@ -157,7 +181,36 @@ class SignupActivity : AppCompatActivity() {
                     // Inicio de sesión exitoso, actualizar UI con la información del usuario firmado
                     Log.d("SoundShare", "signInWithCredential:success")
                     val user = firebaseAuth.currentUser
-                    // ...
+
+                    /*val netHttpTransport = NetHttpTransport()
+                    val gsonFactory = GsonFactory()
+
+                    val googleAccount = GoogleSignIn.getLastSignedInAccount(this)
+                    val accessToken = googleAccount?.idToken
+
+                    val credential1 = GoogleCredential().setAccessToken(accessToken)
+
+                    val peopleService = PeopleService.Builder(netHttpTransport, gsonFactory, credential1)
+                        .setApplicationName("SoundShare")
+                        .setGoogleClientRequestInitializer(PeopleServiceRequestInitializer(accessToken))
+                        .build()
+
+                    val person: Person = peopleService.people().get("people/me")
+                        .setPersonFields("birthdays")
+                        .execute()
+
+                    val birthdays = person.birthdays
+                    for (birthday in birthdays) {
+                        if (birthday.date != null) {
+                            val date = birthday.date
+                            val day = date.day
+                            val month = date.month
+                            val year = date.year
+
+                            println("User's birthday is $day/$month/$year")
+                            Log.d("SoundShare", "User's birthday is $day/$month/$year")
+                        }
+                    }*/
                 } else {
                     // Si el inicio de sesión falla, mostrar un mensaje al usuario
                     Log.w("SoundShare", "signInWithCredential:failure", task.exception)
@@ -264,4 +317,5 @@ class SignupActivity : AppCompatActivity() {
             loadingOverlay.visibility = View.GONE
         }
     }
+
 }
