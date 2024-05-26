@@ -19,28 +19,19 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
-import com.acrcloud.rec.ACRCloudClient
-import com.acrcloud.rec.ACRCloudConfig
-import com.acrcloud.rec.ACRCloudResult
-import com.acrcloud.rec.IACRCloudListener
-import com.acrcloud.rec.utils.ACRCloudLogger
-import com.android.volley.BuildConfig
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.muei.soundshare.databinding.ActivityMainBinding
-import okhttp3.Call
-import okhttp3.Callback
+import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.Response
-import org.json.JSONObject
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.IOException
 
-class MainActivity : AppCompatActivity(), IACRCloudListener {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var topNav: MaterialToolbar
@@ -52,8 +43,8 @@ class MainActivity : AppCompatActivity(), IACRCloudListener {
     private val sampleRate = 44100
     private val channelConfig = AudioFormat.CHANNEL_IN_MONO
     private val audioFormat = AudioFormat.ENCODING_PCM_16BIT
-    private var mClient: ACRCloudClient? = null
-
+    private val bufferSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat)
+    private lateinit var audioData: ByteArray
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -163,41 +154,34 @@ class MainActivity : AppCompatActivity(), IACRCloudListener {
             finish()
         }
 
-
         binding.buttonShazam.setOnClickListener {
-            initAcrcloud()
-            startRecognition()
+            if (isRecording) {
+                stopRecording()
+                progressDialog?.dismiss()
+                sendAudioToShazam()
+            } else {
+                startRecording()
+                val progressDialog = AlertDialog.Builder(this).apply {
+                    setTitle("Analizando audio...")
+                    setView(ProgressBar(this@MainActivity))
+                    setCancelable(false)
+                }.create()
+                progressDialog.show()
+                this.progressDialog = progressDialog
+
+                // Detener la grabación después de 10 segundos
+                Handler(Looper.getMainLooper()).postDelayed({
+                    if (isRecording) {
+                        stopRecording()
+                        progressDialog.dismiss()
+                        sendAudioToShazam()
+                    }
+                }, 10000) // 10 segundos
+            }
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        progressDialog?.dismiss()
-        progressDialog = null
-    }
-
-
-    private fun initAcrcloud() {
-        val config = ACRCloudConfig()
-
-        config.acrcloudListener = this
-        config.context = this
-
-        config.host = "identify-eu-west-1.acrcloud.com"
-        config.accessKey = "a677b38c71a0a38b3092106b31f758ec"
-        config.accessSecret = "ENNzTVtGpr0y1tvnTgWjYhkiyQQyu98oZdI9ycAN"
-
-        config.recorderConfig.rate = 8000
-        config.recorderConfig.channels = 1
-
-        mClient = ACRCloudClient()
-        if (BuildConfig.DEBUG) {
-            ACRCloudLogger.setLog(true)
-        }
-        mClient!!.initWithConfig(config)
-    }
-
-    private fun startRecognition() {
+    private fun startRecording() {
         if (ActivityCompat.checkSelfPermission(
                 this,
                 android.Manifest.permission.RECORD_AUDIO
@@ -210,52 +194,73 @@ class MainActivity : AppCompatActivity(), IACRCloudListener {
                 200
             )
         }
-        mClient?.let {
-            if (it.startRecognize()) {
-                // Mostrar diálogo de progreso
-                progressDialog = AlertDialog.Builder(this).apply {
-                    setTitle("Analizando audio...")
-                    setView(ProgressBar(this@MainActivity))
-                    setCancelable(false)
-                }.create()
-                progressDialog?.show()
-            } else {
-                Log.e("SoundShare", "Init error")
+        audioRecord = AudioRecord(
+            MediaRecorder.AudioSource.MIC,
+            sampleRate,
+            channelConfig,
+            audioFormat,
+            bufferSize
+        )
+        audioData = ByteArray(bufferSize)
+        audioRecord?.startRecording()
+        isRecording = true
+
+        Thread {
+            var bytesRead: Int
+            val outputStream = ByteArrayOutputStream()
+            while (isRecording) {
+                bytesRead = audioRecord?.read(audioData, 0, bufferSize) ?: 0
+                if (bytesRead > 0) {
+                    outputStream.write(audioData, 0, bytesRead)
+                }
             }
-        } ?: run {
-            Log.e("SoundShare", "Client not ready")
+            audioRecord?.stop()
+            audioRecord?.release()
+            audioData = outputStream.toByteArray()
+        }.start()
+    }
+
+    private fun stopRecording() {
+        isRecording = false
+    }
+
+    private fun sendAudioToShazam() {
+        if (audioData.isEmpty()) {
+            Log.e("SoundShare", "No audio data recorded")
+            return
         }
-    }
 
-    override fun onResult(acrResult: ACRCloudResult?) {
-        acrResult?.let {
-            Log.d("SoundShare", "ACRCloud result received: ${it.result}")
-            handleResult(it.result)
-        }
-    }
+        val file = File(getExternalFilesDir("Music"), "StarWars3.wav") // Reemplaza "ruta_del_archivo" con la ubicación de tu archivo
 
-    override fun onVolumeChanged(vol: Double) {
-        Log.d("SoundShare", "Volume changed $vol")
-    }
+        val client = OkHttpClient()
 
-    private fun handleResult(acrResult: String) {
-        // Parse the JSON response
-        val jsonObject = JSONObject(acrResult)
-        val metadata = jsonObject.getJSONObject("metadata")
-        val humming = metadata.getJSONArray("humming")
-        val firstResult = humming.getJSONObject(0)
-        val songTitle = firstResult.getString("title")
+        val requestBody = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("upload_file", "audio.wav",
+                file.asRequestBody("application/octet-stream".toMediaTypeOrNull()))
+            .build()
 
-        // Close the progress dialog
-        progressDialog?.dismiss()
+        val request = Request.Builder()
+            .url("https://shazam-api6.p.rapidapi.com/shazam/recognize/")
+            .post(requestBody)
+            .addHeader("content-type", "multipart/form-data; boundary=---011000010111000001101001")
+            .addHeader("X-RapidAPI-Key", "e133776cdamsh86b926a2158ff65p16da0cjsnb8c64f8fcee1")
+            .addHeader("X-RapidAPI-Host", "shazam-api6.p.rapidapi.com")
+            .build()
 
-        // Show the song title in a new dialog
-        AlertDialog.Builder(this).apply {
-            setTitle("Song Identified")
-            setMessage(songTitle)
-            setPositiveButton("OK") { dialog, _ ->
-                dialog.dismiss()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.e("SoundShare", "Failed to send audio to Shazam", e)
             }
-        }.show()
+
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body?.string()
+                    Log.d("SoundShare", "Response from Shazam: $responseBody")
+                } else {
+                    Log.e("SoundShare", "Error response from Shazam: ${response.message}")
+                }
+            }
+        })
     }
 }
