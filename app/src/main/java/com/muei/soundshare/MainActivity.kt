@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
     private val channelConfig = AudioFormat.CHANNEL_IN_MONO
     private val audioFormat = AudioFormat.ENCODING_PCM_16BIT
     private val bufferSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat)
-    private lateinit var audioData: ByteArray
+//    private lateinit var audioData: ByteArray
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -158,9 +158,9 @@ class MainActivity : AppCompatActivity() {
             if (isRecording) {
                 stopRecording()
                 progressDialog?.dismiss()
-                sendAudioToShazam()
+//                sendAudioToShazam()
             } else {
-                startRecording()
+                startRecording(File(getExternalFilesDir("Music"), "nueva_grabacion.mp3"))
                 val progressDialog = AlertDialog.Builder(this).apply {
                     setTitle("Analizando audio...")
                     setView(ProgressBar(this@MainActivity))
@@ -174,14 +174,16 @@ class MainActivity : AppCompatActivity() {
                     if (isRecording) {
                         stopRecording()
                         progressDialog.dismiss()
-                        sendAudioToShazam()
+                       sendAudioToShazam()
                     }
                 }, 10000) // 10 segundos
             }
         }
     }
 
-    private fun startRecording() {
+    private var recorder: MediaRecorder? = null
+
+    private fun startRecording(outputFile: File) {
         if (ActivityCompat.checkSelfPermission(
                 this,
                 android.Manifest.permission.RECORD_AUDIO
@@ -193,50 +195,49 @@ class MainActivity : AppCompatActivity() {
                 arrayOf(android.Manifest.permission.RECORD_AUDIO),
                 200
             )
-        }
-        audioRecord = AudioRecord(
-            MediaRecorder.AudioSource.MIC,
-            sampleRate,
-            channelConfig,
-            audioFormat,
-            bufferSize
-        )
-        audioData = ByteArray(bufferSize)
-        audioRecord?.startRecording()
-        isRecording = true
-
-        Thread {
-            var bytesRead: Int
-            val outputStream = ByteArrayOutputStream()
-            while (isRecording) {
-                bytesRead = audioRecord?.read(audioData, 0, bufferSize) ?: 0
-                if (bytesRead > 0) {
-                    outputStream.write(audioData, 0, bytesRead)
-                }
-            }
-            audioRecord?.stop()
-            audioRecord?.release()
-            audioData = outputStream.toByteArray()
-        }.start()
-    }
-
-    private fun stopRecording() {
-        isRecording = false
-    }
-
-    private fun sendAudioToShazam() {
-        if (audioData.isEmpty()) {
-            Log.e("SoundShare", "No audio data recorded")
             return
         }
 
-        val file = File(getExternalFilesDir("Music"), "StarWars3.wav") // Reemplaza "ruta_del_archivo" con la ubicación de tu archivo
+        recorder = MediaRecorder().apply {
+            setAudioSource(MediaRecorder.AudioSource.MIC)
+            setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+            setOutputFile(outputFile.absolutePath)
+
+            try {
+                prepare()
+                start()
+                isRecording = true
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun stopRecording() {
+        if (isRecording) {
+            recorder?.apply {
+                stop()
+                release()
+            }
+            recorder = null
+            isRecording = false
+        }
+    }
+
+    private fun sendAudioToShazam() {
+//        if (audioData.isEmpty()) {
+//            Log.e("SoundShare", "No audio data recorded")
+//            return
+//        }
+
+        val file = File(getExternalFilesDir("Music"), "nueva_grabacion.mp3") // Reemplaza "ruta_del_archivo" con la ubicación de tu archivo
 
         val client = OkHttpClient()
 
         val requestBody = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
-            .addFormDataPart("upload_file", "audio.wav",
+            .addFormDataPart("upload_file", "nueva_grabacion.mp3",
                 file.asRequestBody("application/octet-stream".toMediaTypeOrNull()))
             .build()
 
