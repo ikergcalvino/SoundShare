@@ -1,10 +1,7 @@
 package com.muei.soundshare
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.AudioFormat
-import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Bundle
 import android.os.Handler
@@ -27,9 +24,14 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.muei.soundshare.databinding.ActivityMainBinding
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.Response
 import org.json.JSONObject
 import java.io.File
 import java.io.IOException
@@ -42,11 +44,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private var isRecording = false
     private var progressDialog: AlertDialog? = null
-    private var audioRecord: AudioRecord? = null
-    private val sampleRate = 44100
-    private val channelConfig = AudioFormat.CHANNEL_IN_MONO
-    private val audioFormat = AudioFormat.ENCODING_PCM_16BIT
-    private val bufferSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -233,8 +230,10 @@ class MainActivity : AppCompatActivity() {
 
         val requestBody = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
-            .addFormDataPart("upload_file", "nueva_grabacion.mp3",
-                file.asRequestBody("application/octet-stream".toMediaTypeOrNull()))
+            .addFormDataPart(
+                "upload_file", "nueva_grabacion.mp3",
+                file.asRequestBody("application/octet-stream".toMediaTypeOrNull())
+            )
             .build()
 
         val request = Request.Builder()
