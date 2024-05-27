@@ -1,5 +1,6 @@
 package com.muei.soundshare
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.AudioFormat
@@ -8,10 +9,12 @@ import android.media.MediaRecorder
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Base64
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -19,6 +22,7 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.Glide
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -26,8 +30,7 @@ import com.muei.soundshare.databinding.ActivityMainBinding
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.ByteArrayOutputStream
+import org.json.JSONObject
 import java.io.File
 import java.io.IOException
 
@@ -44,7 +47,6 @@ class MainActivity : AppCompatActivity() {
     private val channelConfig = AudioFormat.CHANNEL_IN_MONO
     private val audioFormat = AudioFormat.ENCODING_PCM_16BIT
     private val bufferSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat)
-//    private lateinit var audioData: ByteArray
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -158,7 +160,6 @@ class MainActivity : AppCompatActivity() {
             if (isRecording) {
                 stopRecording()
                 progressDialog?.dismiss()
-//                sendAudioToShazam()
             } else {
                 startRecording(File(getExternalFilesDir("Music"), "nueva_grabacion.mp3"))
                 val progressDialog = AlertDialog.Builder(this).apply {
@@ -174,7 +175,7 @@ class MainActivity : AppCompatActivity() {
                     if (isRecording) {
                         stopRecording()
                         progressDialog.dismiss()
-                       sendAudioToShazam()
+                        sendAudioToShazam()
                     }
                 }, 10000) // 10 segundos
             }
@@ -226,12 +227,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun sendAudioToShazam() {
-//        if (audioData.isEmpty()) {
-//            Log.e("SoundShare", "No audio data recorded")
-//            return
-//        }
-
-        val file = File(getExternalFilesDir("Music"), "nueva_grabacion.mp3") // Reemplaza "ruta_del_archivo" con la ubicación de tu archivo
+        val file = File(getExternalFilesDir("Music"), "nueva_grabacion.mp3")
 
         val client = OkHttpClient()
 
@@ -251,17 +247,60 @@ class MainActivity : AppCompatActivity() {
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread {
+                    showDialog("Error", "Error al mandar el audio a Shazam")
+                }
                 Log.e("SoundShare", "Failed to send audio to Shazam", e)
             }
 
             override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    val responseBody = response.body?.string()
-                    Log.d("SoundShare", "Response from Shazam: $responseBody")
-                } else {
-                    Log.e("SoundShare", "Error response from Shazam: ${response.message}")
+                runOnUiThread {
+                    if (response.isSuccessful) {
+                        response.body?.string()?.let { responseBody ->
+                            try {
+                                val jsonResponse = JSONObject(responseBody)
+                                val track = jsonResponse.getJSONObject("track")
+                                val title = track.getString("title")
+                                val subtitle = track.getString("subtitle")
+                                val images = track.getJSONObject("images")
+                                val coverArt = images.getString("coverart")
+
+                                showTrackDialog(title, subtitle, coverArt)
+                            } catch (e: Exception) {
+                                showDialog("Error", "Error parsing response")
+                                Log.e("SoundShare", "Error parsing response", e)
+                            }
+                        }
+                    } else {
+                        showDialog("Error", "Error response from Shazam: ${response.message}")
+                        Log.e("SoundShare", "Error response from Shazam: ${response.message}")
+                    }
                 }
             }
         })
+    }
+
+    private fun showDialog(title: String, message: String) {
+        AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("OK", null)
+            .show()
+    }
+
+    private fun showTrackDialog(title: String, subtitle: String, coverArt: String) {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_track_info, null)
+        val imageView = dialogView.findViewById<ImageView>(R.id.coverArtImageView)
+        val titleView = dialogView.findViewById<TextView>(R.id.titleTextView)
+        val subtitleView = dialogView.findViewById<TextView>(R.id.subtitleTextView)
+
+        titleView.text = title
+        subtitleView.text = subtitle
+        Glide.with(this).load(coverArt).into(imageView)
+
+        AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setPositiveButton("OK", null)
+            .show()
     }
 }

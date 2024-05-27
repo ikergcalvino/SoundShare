@@ -50,6 +50,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
+    implementation ("com.github.bumptech.glide:glide:4.13.2")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
     implementation("org.chromium.net:cronet-embedded:119.6045.31")
     testImplementation("junit:junit:4.13.2")
