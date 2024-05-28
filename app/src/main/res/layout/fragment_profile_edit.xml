@@ -62,8 +62,45 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/select_song"
+                    style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:text="SELECT CANCIÓN"
+                    android:visibility="visible"
+                    app:icon="@drawable/ic_album"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/top_appbar" />
 
-                <include layout="@layout/layout_song" />
+                <include
+                    android:id="@+id/selected_song"
+                    layout="@layout/layout_song"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:visibility="gone"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/top_appbar" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/text_post"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_margin="8dp"
+                    android:background="@android:color/transparent"
+                    android:enabled="false"
+                    android:hint="@string/text_post"
+                    android:inputType="text"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/selected_song" />
+
+<!--                <include layout="@layout/layout_song" />-->
 
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/switch_location"
