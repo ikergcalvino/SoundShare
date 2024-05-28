@@ -130,7 +130,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             .addOnFailureListener { e ->
                 Toast.makeText(
                     requireContext(),
-                    "Error obteniendo ubicación actual: ${e.message}",
+                    "Error getting current location: ${e.message}",
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -188,7 +188,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             .addOnFailureListener { e ->
                 Toast.makeText(
                     requireContext(),
-                    "Error obteniendo ubicación actual: ${e.message}",
+                    "Error getting current location: ${e.message}",
                     Toast.LENGTH_SHORT
                 ).show()
             }

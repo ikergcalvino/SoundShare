@@ -67,11 +67,10 @@ class MainActivity : AppCompatActivity() {
         if (isGranted) {
             startRecording(File(getExternalFilesDir("Music"), "song.mp3"))
         } else {
-            showDialog("Permiso denegado", "No se puede grabar audio sin permisos")
+            showDialog("Permission denied", "Cannot record audio without permissions")
         }
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -200,7 +199,7 @@ class MainActivity : AppCompatActivity() {
                             isVisible = true
                         }
                     progressDialog =
-                        MaterialAlertDialogBuilder(this).setTitle("Analizando audio...")
+                        MaterialAlertDialogBuilder(this).setTitle("Analyzing audio...")
                             .setView(overlayLoading).setCancelable(false).show()
 
                     isAnalyzing = true
@@ -263,7 +262,7 @@ class MainActivity : AppCompatActivity() {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    showDialog("Error", "Error al mandar el audio a Shazam")
+                    showDialog("Error", "Error sending audio to Shazam")
                     progressDialog?.dismiss()
                     isAnalyzing = false
                     isDialogShowing = true
@@ -286,7 +285,7 @@ class MainActivity : AppCompatActivity() {
 
                                 showTrackDialog(title, subtitle, coverArt)
                             } catch (e: Exception) {
-                                showDialog("Error", "No se ha podido analizar la canción")
+                                showDialog("Error", "It has not been possible to analyze the song")
                                 Log.e("SoundShare", "Error parsing response", e)
                             }
                         }

@@ -30,7 +30,7 @@ class PostAdapter(private val posts: List<Post>, clickListener: ItemClickListene
 
     override fun bindItem(view: View, item: Post) {
         val binding = LayoutPostBinding.bind(view)
-        binding.userName.text = "USUARIO"
+        binding.userName.text = "User"
 
         spotifyClient.getTrack(item.songId) { song ->
             song?.let {

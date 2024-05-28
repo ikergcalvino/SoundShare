@@ -84,11 +84,11 @@ class PostActivity : AppCompatActivity(), ItemClickListener<Song>, KoinComponent
                     locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
 
                 if (!isLocationEnabled) {
-                    MaterialAlertDialogBuilder(this).setTitle("Activar Ubicación")
-                        .setMessage("Tu ubicación está desactivada. ¿Quieres activarla ahora?")
-                        .setPositiveButton("Activar") { _, _ ->
+                    MaterialAlertDialogBuilder(this).setTitle("Enable Location")
+                        .setMessage("Your location is deactivated, do you want to activate it now?")
+                        .setPositiveButton("Enable") { _, _ ->
                             startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-                        }.setNegativeButton("Cancelar") { _, _ ->
+                        }.setNegativeButton("Cancel") { _, _ ->
                             binding.switchLocation.isChecked = false
                         }.setOnCancelListener {
                             binding.switchLocation.isChecked = false
@@ -174,16 +174,16 @@ class PostActivity : AppCompatActivity(), ItemClickListener<Song>, KoinComponent
         binding.topNav.setNavigationOnClickListener {
             Log.d("SoundShare", "Back button clicked")
 
-            MaterialAlertDialogBuilder(this).setTitle("Confirmación")
-                .setMessage("¿Estás seguro de que quieres salir? Se perderán los datos del post.")
-                .setPositiveButton("Sí") { dialog, _ ->
+            MaterialAlertDialogBuilder(this).setTitle("Confirmation")
+                .setMessage("Are you sure you want to leave? Post data will be lost.")
+                .setPositiveButton("Yes") { dialog, _ ->
                     val mainIntent = Intent(this@PostActivity, MainActivity::class.java)
                     mainIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                     startActivity(mainIntent)
                     overridePendingTransition(R.anim.slide_down, 0)
                     dialog.dismiss()
                     finish()
-                }.setNegativeButton("Cancelar") { dialog, _ ->
+                }.setNegativeButton("Cancel") { dialog, _ ->
                     dialog.dismiss()
                 }.show()
         }
