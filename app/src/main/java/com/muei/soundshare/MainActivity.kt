@@ -51,6 +51,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
 
     private var isRecording = false
+    private var isAnalyzing = false
     private var recorder: MediaRecorder? = null
     private var progressDialog: AlertDialog? = null
     private val client = OkHttpClient()
@@ -177,8 +178,8 @@ class MainActivity : AppCompatActivity() {
 
     @OptIn(DelicateCoroutinesApi::class)
     private fun handleShazamClick() {
-        if (isRecording) {
-            stopRecording()
+        if (isRecording || isAnalyzing) {
+            return
         } else {
             if (ContextCompat.checkSelfPermission(
                     this, Manifest.permission.RECORD_AUDIO
@@ -186,6 +187,7 @@ class MainActivity : AppCompatActivity() {
             ) {
                 requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
             } else {
+                isAnalyzing = true
                 startRecording(File(getExternalFilesDir("Music"), "song.mp3"))
                 val overlayLoading =
                     layoutInflater.inflate(R.layout.overlay_loading, null).apply {
@@ -201,7 +203,7 @@ class MainActivity : AppCompatActivity() {
                         .setView(overlayLoading).setCancelable(false).show()
 
                 GlobalScope.launch(Dispatchers.Main) {
-                    delay(5000) // 5s
+                    delay(9000) // 9s
                     if (isRecording) {
                         stopRecording()
                         sendAudioToShazam()
@@ -259,6 +261,7 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread {
                     showDialog("Error", "Error al mandar el audio a Shazam")
                     progressDialog?.dismiss()
+                    isAnalyzing = false
                 }
                 Log.e("SoundShare", "Failed to send audio to Shazam", e)
             }
@@ -266,6 +269,7 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     progressDialog?.dismiss()
+                    isAnalyzing = false
                     if (response.isSuccessful) {
                         response.body?.string()?.let { responseBody ->
                             try {

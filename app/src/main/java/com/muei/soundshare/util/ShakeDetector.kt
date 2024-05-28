@@ -18,7 +18,7 @@ class ShakeDetector(private val onShakeListener: () -> Unit) : SensorEventListen
             val z = event.values[2]
 
             val acceleration = sqrt(x * x + y * y + z * z) - SensorManager.GRAVITY_EARTH
-            if (acceleration > 12) { // Adjust the threshold as needed
+            if (acceleration > 18) { // Increased threshold to make it less sensitive
                 val currentTime = System.currentTimeMillis()
                 if (currentTime - lastShakeTime > 1000) { // 1 second interval
                     lastShakeTime = currentTime
