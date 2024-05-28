@@ -32,6 +32,10 @@
     <string name="log_in_here"><u>Log in here!</u></string>
     <string name="map">Map</string>
     <string name="notifications">Notifications</string>
+    <string name="notification1">\@iker has requested you to be friends</string>
+    <string name="notification2">\@jaime has requested you to be friends</string>
+    <string name="notification3">\@mar has requested you to be friends</string>
+    <string name="notification4">\@david has requested you to be friends</string>
     <string name="ok">OK</string>
     <string name="or">Or</string>
     <string name="password">Password</string>
