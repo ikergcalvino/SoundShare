@@ -41,7 +41,8 @@ class SearchFragment : Fragment(), ItemClickListener<User> {
 
         binding.recyclerUsers.layoutManager = LinearLayoutManager(requireContext())
 
-        userAdapter = UserAdapter(emptyList(), this@SearchFragment, firebase.currentUser?.uid.toString())
+        userAdapter =
+            UserAdapter(emptyList(), this@SearchFragment, firebase.currentUser?.uid.toString())
         binding.recyclerUsers.adapter = userAdapter
 
         firebase.currentUser?.let { user ->

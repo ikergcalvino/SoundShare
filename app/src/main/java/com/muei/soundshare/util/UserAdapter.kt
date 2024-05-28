@@ -9,7 +9,9 @@ import com.muei.soundshare.databinding.LayoutUserBinding
 import com.muei.soundshare.entities.User
 
 class UserAdapter(
-    private var users: List<User>, private val clickListener: ItemClickListener<User>, private val currentUser:String
+    private var users: List<User>,
+    private val clickListener: ItemClickListener<User>,
+    private val currentUser: String
 ) : BaseAdapter<User>(users, clickListener, R.layout.layout_user) {
 
     private var filteredUsers: List<User> = users
@@ -35,7 +37,7 @@ class UserAdapter(
         } else {
             users.filter { it.username.contains(query, ignoreCase = true) }
         }
-        filteredUsers=filteredUsers.filterNot { it.uid.equals(currentUser) }
+        filteredUsers = filteredUsers.filterNot { it.uid.equals(currentUser) }
         notifyDataSetChanged()
     }
 
@@ -86,6 +88,7 @@ class UserAdapter(
             clickListener.onRemoveFriendButtonClick(item)
         }
     }
+
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
 
         if (position < filteredUsers.size) {
@@ -93,7 +96,7 @@ class UserAdapter(
             bindItem(holder.itemView, item)
 
             holder.itemView.setOnClickListener {
-                clickListener?.onItemClick(item)
+                clickListener.onItemClick(item)
             }
 
             val addFriendButton: MaterialButton? =
@@ -101,7 +104,7 @@ class UserAdapter(
 
             addFriendButton?.setOnClickListener {
                 println("BaseAdapter: Add Friend Clicked")
-                clickListener?.onAddFriendButtonClick(item)
+                clickListener.onAddFriendButtonClick(item)
             }
 
             val removeFriendButton: MaterialButton? =
@@ -109,7 +112,7 @@ class UserAdapter(
 
             removeFriendButton?.setOnClickListener {
                 println("BaseAdapter: Remove Friend Clicked")
-                clickListener?.onRemoveFriendButtonClick(item)
+                clickListener.onRemoveFriendButtonClick(item)
             }
         }
     }

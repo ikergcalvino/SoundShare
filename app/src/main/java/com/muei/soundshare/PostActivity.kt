@@ -150,8 +150,7 @@ class PostActivity : AppCompatActivity(), ItemClickListener<Song>, KoinComponent
         binding.buttonPost.setOnClickListener {
             Log.d("SoundShare", "Post button clicked")
 
-            val postRef = firestore.collection("users").document(firebase.currentUser!!.uid)
-                .collection("posts").document()
+            val postRef = firestore.collection("posts").document()
 
             val post = Post(
                 songId = selectedSongId,

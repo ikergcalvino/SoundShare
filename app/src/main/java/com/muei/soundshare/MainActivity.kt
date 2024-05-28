@@ -256,7 +256,7 @@ class MainActivity : AppCompatActivity() {
         val request = Request.Builder().url("https://shazam-api6.p.rapidapi.com/shazam/recognize/")
             .post(requestBody)
             .addHeader("content-type", "multipart/form-data; boundary=---011000010111000001101001")
-            .addHeader("X-RapidAPI-Key", "e133776cdamsh86b926a2158ff65p16da0cjsnb8c64f8fcee1")
+            .addHeader("X-RapidAPI-Key", "f1fcdd05eemshd3517b3619134cbp10867bjsn04e1d1907cb1")
             .addHeader("X-RapidAPI-Host", "shazam-api6.p.rapidapi.com").build()
 
         client.newCall(request).enqueue(object : Callback {

@@ -17,19 +17,22 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var postAdapter: PostAdapter
+    private lateinit var homeViewModel: HomeViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        val homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+        homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-
         binding.recyclerHome.layoutManager = LinearLayoutManager(requireContext())
 
-        postAdapter = PostAdapter(homeViewModel.getPosts(), null)
-
+        postAdapter = PostAdapter(emptyList(), null)
         binding.recyclerHome.adapter = postAdapter
+
+        homeViewModel.posts.observe(viewLifecycleOwner) { posts ->
+            postAdapter.updatePosts(posts)
+        }
 
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
@@ -45,8 +48,6 @@ class HomeFragment : Fragment() {
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
 
-        postAdapter.filter(false)
-
         return binding.root
     }
 
@@ -54,5 +55,4 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }

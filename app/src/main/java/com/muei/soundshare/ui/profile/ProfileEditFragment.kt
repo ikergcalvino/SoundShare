@@ -36,9 +36,8 @@ import com.muei.soundshare.util.Constants
 import com.muei.soundshare.util.ItemClickListener
 import com.muei.soundshare.util.SongAdapter
 import org.koin.android.ext.android.inject
-import org.koin.core.component.inject
 
-class ProfileEditFragment : Fragment() , ItemClickListener<Song> {
+class ProfileEditFragment : Fragment(), ItemClickListener<Song> {
 
     private lateinit var profileEditViewModel: ProfileEditViewModel
 
@@ -56,7 +55,6 @@ class ProfileEditFragment : Fragment() , ItemClickListener<Song> {
     private var imageUri: Uri? = null
     private lateinit var resultDialog: AlertDialog
     private var favouriteSongId: String = ""
-
 
 
     private val requestCameraPermissionLauncher =
@@ -173,11 +171,13 @@ class ProfileEditFragment : Fragment() , ItemClickListener<Song> {
                 this.layoutInflater.inflate(R.layout.layout_song_result, null)
 
             resultDialog =
-                MaterialAlertDialogBuilder(requireContext()).setView(songResultView).setTitle("Search Results")
+                MaterialAlertDialogBuilder(requireContext()).setView(songResultView)
+                    .setTitle("Search Results")
                     .setPositiveButton("OK", null).create()
 
             val searchDialog =
-                MaterialAlertDialogBuilder(requireContext()).setView(songSearchView).setTitle("Song Search")
+                MaterialAlertDialogBuilder(requireContext()).setView(songSearchView)
+                    .setTitle("Song Search")
                     .setPositiveButton("Search") { _, _ ->
                         spotifyClient.searchSongs(textTrackName.text.toString()) { songs ->
                             requireActivity().runOnUiThread {
@@ -352,7 +352,7 @@ class ProfileEditFragment : Fragment() , ItemClickListener<Song> {
     }
 
     override fun onItemClick(item: Song) {
-        favouriteSongId=item.songId
+        favouriteSongId = item.songId
 
         resultDialog.dismiss()
 
