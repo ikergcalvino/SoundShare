@@ -14,21 +14,31 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.muei.soundshare.R
 import com.muei.soundshare.databinding.FragmentProfileEditBinding
+import com.muei.soundshare.entities.Song
+import com.muei.soundshare.services.SpotifyClient
 import com.muei.soundshare.util.Constants
+import com.muei.soundshare.util.ItemClickListener
+import com.muei.soundshare.util.SongAdapter
 import org.koin.android.ext.android.inject
+import org.koin.core.component.inject
 
-class ProfileEditFragment : Fragment() {
+class ProfileEditFragment : Fragment() , ItemClickListener<Song> {
 
     private lateinit var profileEditViewModel: ProfileEditViewModel
 
@@ -39,10 +49,15 @@ class ProfileEditFragment : Fragment() {
     private val firestore: FirebaseFirestore by inject()
     private val firebaseAuth: FirebaseAuth by inject()
     private val storage: FirebaseStorage by inject()
+    private val spotifyClient: SpotifyClient by inject()
 
-    private var profileImage: String = ""
+    private var profilePicture: String = ""
     private var currentUserUid: String? = null
     private var imageUri: Uri? = null
+    private lateinit var resultDialog: AlertDialog
+    private var favouriteSongId: String = ""
+
+
 
     private val requestCameraPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
@@ -148,8 +163,37 @@ class ProfileEditFragment : Fragment() {
                 updateUserProfile()
             }
         }
+        binding.selectSong.setOnClickListener {
+            val songSearchView: View =
+                this.layoutInflater.inflate(R.layout.layout_song_search, null)
 
+            val textTrackName = songSearchView.findViewById<TextInputEditText>(R.id.text_track_name)
+
+            val songResultView: View =
+                this.layoutInflater.inflate(R.layout.layout_song_result, null)
+
+            resultDialog =
+                MaterialAlertDialogBuilder(requireContext()).setView(songResultView).setTitle("Search Results")
+                    .setPositiveButton("OK", null).create()
+
+            val searchDialog =
+                MaterialAlertDialogBuilder(requireContext()).setView(songSearchView).setTitle("Song Search")
+                    .setPositiveButton("Search") { _, _ ->
+                        spotifyClient.searchSongs(textTrackName.text.toString()) { songs ->
+                            requireActivity().runOnUiThread {
+                                val recyclerView =
+                                    songResultView.findViewById<RecyclerView>(R.id.recycler_songs)
+                                recyclerView.layoutManager = LinearLayoutManager(requireContext())
+                                recyclerView.adapter = SongAdapter(songs, this)
+                            }
+                        }
+                        resultDialog.show()
+                    }.setNegativeButton("Cancel", null).create()
+
+            searchDialog.show()
+        }
         return binding.root
+
     }
 
     private fun createImageUri(context: Context): Uri? {
@@ -207,8 +251,8 @@ class ProfileEditFragment : Fragment() {
         currentUserUid?.let { uid ->
             val storageRef = storage.reference.child("profile_pictures/$uid.jpg")
             storageRef.downloadUrl.addOnSuccessListener { uri ->
-                profileImage = uri.toString()
-                Glide.with(this).load(uri).circleCrop().into(binding.profileImage)
+                profilePicture = uri.toString()
+                Glide.with(this).load(uri).circleCrop().into(binding.profilePicture)
             }.addOnFailureListener {
                 Log.e("SoundShare", "Error loading profile image", it)
             }
@@ -220,9 +264,9 @@ class ProfileEditFragment : Fragment() {
             val storageRef = storage.reference.child("profile_pictures/$uid.jpg")
             storageRef.putFile(uri).addOnSuccessListener {
                 storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                    profileImage = downloadUri.toString()
-                    Glide.with(this).load(downloadUri).circleCrop().into(binding.profileImage)
-                    updateProfileImageInFirestore(downloadUri.toString())
+                    profilePicture = downloadUri.toString()
+                    Glide.with(this).load(downloadUri).circleCrop().into(binding.profilePicture)
+                    updateprofilePictureInFirestore(downloadUri.toString())
                 }.addOnFailureListener {
                     Log.e("SoundShare", "Error getting download URL", it)
                 }
@@ -232,11 +276,11 @@ class ProfileEditFragment : Fragment() {
         }
     }
 
-    private fun updateProfileImageInFirestore(imageUrl: String) {
+    private fun updateprofilePictureInFirestore(imageUrl: String) {
         val currentUserEmail = firebaseAuth.currentUser?.email
         if (currentUserEmail != null) {
             firestore.collection("users").document(currentUserEmail)
-                .update("profileImage", imageUrl)
+                .update("profilePicture", imageUrl)
                 .addOnSuccessListener {
                     Log.d("SoundShare", "Profile image URL updated in Firestore")
                 }.addOnFailureListener { e ->
@@ -277,9 +321,9 @@ class ProfileEditFragment : Fragment() {
                 }
         }
 
-        if (profileImage.isNotEmpty()) {
+        if (profilePicture.isNotEmpty()) {
             firestore.collection("users").document(currentUserUid!!)
-                .update("profileImage", profileImage).addOnFailureListener { e ->
+                .update("profilePicture", profilePicture).addOnFailureListener { e ->
                     Log.w("SoundShare", "Error updating profile image", e)
                     success = false
                 }
@@ -294,10 +338,31 @@ class ProfileEditFragment : Fragment() {
                 requireContext(), getString(R.string.profile_not_updated), Toast.LENGTH_LONG
             ).show()
         }
+        firestore.collection("users").document(currentUserUid!!)
+            .update("favouriteSongId", favouriteSongId).addOnFailureListener { e ->
+                Log.w("SoundShare", "Error updating favourite song id", e)
+                success = false
+            }
+
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onItemClick(item: Song) {
+        favouriteSongId=item.songId
+
+        resultDialog.dismiss()
+
+    }
+
+    override fun onAddFriendButtonClick(item: Song) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onRemoveFriendButtonClick(item: Song) {
+        TODO("Not yet implemented")
     }
 }

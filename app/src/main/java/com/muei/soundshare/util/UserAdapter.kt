@@ -1,18 +1,21 @@
 package com.muei.soundshare.util
 
+import android.util.Log
 import android.view.View
 import com.bumptech.glide.Glide
+import com.google.android.material.button.MaterialButton
 import com.muei.soundshare.R
 import com.muei.soundshare.databinding.LayoutUserBinding
 import com.muei.soundshare.entities.User
 
 class UserAdapter(
-    private var users: List<User>, private val clickListener: ItemClickListener<User>
+    private var users: List<User>, private val clickListener: ItemClickListener<User>, private val currentUser:String
 ) : BaseAdapter<User>(users, clickListener, R.layout.layout_user) {
 
     private var filteredUsers: List<User> = users
     private var friendsList: List<String> = emptyList()
     private var friendRequests: List<String> = emptyList()
+
 
     fun updateUsers(newUsers: List<User>) {
         users = newUsers
@@ -32,6 +35,7 @@ class UserAdapter(
         } else {
             users.filter { it.username.contains(query, ignoreCase = true) }
         }
+        filteredUsers=filteredUsers.filterNot { it.uid.equals(currentUser) }
         notifyDataSetChanged()
     }
 
@@ -40,6 +44,8 @@ class UserAdapter(
     }
 
     override fun bindItem(view: View, item: User) {
+        Log.d("SoundShare", "bindItem called for user: ${item.username}")
+
         val binding = LayoutUserBinding.bind(view)
 
         // Use Glide to load the profile picture
@@ -78,6 +84,33 @@ class UserAdapter(
         binding.buttonRemoveFriend.setOnClickListener {
             println("Remove Friend Clicked")
             clickListener.onRemoveFriendButtonClick(item)
+        }
+    }
+    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
+
+        if (position < filteredUsers.size) {
+            val item = filteredUsers[position]
+            bindItem(holder.itemView, item)
+
+            holder.itemView.setOnClickListener {
+                clickListener?.onItemClick(item)
+            }
+
+            val addFriendButton: MaterialButton? =
+                holder.itemView.findViewById(R.id.button_add_friend)
+
+            addFriendButton?.setOnClickListener {
+                println("BaseAdapter: Add Friend Clicked")
+                clickListener?.onAddFriendButtonClick(item)
+            }
+
+            val removeFriendButton: MaterialButton? =
+                holder.itemView.findViewById(R.id.button_remove_friend)
+
+            removeFriendButton?.setOnClickListener {
+                println("BaseAdapter: Remove Friend Clicked")
+                clickListener?.onRemoveFriendButtonClick(item)
+            }
         }
     }
 }

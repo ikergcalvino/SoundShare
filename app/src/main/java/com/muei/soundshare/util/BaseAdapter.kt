@@ -1,5 +1,6 @@
 package com.muei.soundshare.util
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +24,8 @@ abstract class BaseAdapter<T>(
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
+        Log.d("SoundShare", "position ${position}, items ${items}, itemsize ${items.size}")
+
         if (position < items.size) {
             val item = items[position]
             bindItem(holder.itemView, item)
