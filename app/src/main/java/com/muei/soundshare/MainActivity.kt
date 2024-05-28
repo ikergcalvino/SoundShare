@@ -4,17 +4,13 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -22,7 +18,15 @@ import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.imageview.ShapeableImageView
+import com.google.android.material.textview.MaterialTextView
 import com.muei.soundshare.databinding.ActivityMainBinding
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -41,9 +45,23 @@ class MainActivity : AppCompatActivity() {
     private lateinit var topNav: MaterialToolbar
     private lateinit var bottomNav: BottomNavigationView
     private lateinit var navController: NavController
-    private var isRecording = false
-    private var progressDialog: AlertDialog? = null
 
+    private var isRecording = false
+    private var recorder: MediaRecorder? = null
+    private var progressDialog: AlertDialog? = null
+    private val client = OkHttpClient()
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            startRecording(File(getExternalFilesDir("Music"), "song.mp3"))
+        } else {
+            showDialog("Permiso denegado", "No se puede grabar audio sin permisos")
+        }
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -68,13 +86,7 @@ class MainActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.navigation_profile -> {
-                    topNav.subtitle = destination.label
-                    binding.buttonShazam.visibility = View.GONE
-                    topNav.menu.clear()
-                }
-
-                R.id.navigation_edit_profile -> {
+                R.id.navigation_profile, R.id.navigation_edit_profile -> {
                     topNav.subtitle = destination.label
                     binding.buttonShazam.visibility = View.GONE
                     topNav.menu.clear()
@@ -144,46 +156,40 @@ class MainActivity : AppCompatActivity() {
         binding.buttonShazam.setOnClickListener {
             if (isRecording) {
                 stopRecording()
-                progressDialog?.dismiss()
             } else {
-                startRecording(File(getExternalFilesDir("Music"), "nueva_grabacion.mp3"))
-                val progressDialog = AlertDialog.Builder(this).apply {
-                    setTitle("Analizando audio...")
-                    setView(ProgressBar(this@MainActivity))
-                    setCancelable(false)
-                }.create()
-                progressDialog.show()
-                this.progressDialog = progressDialog
+                if (ContextCompat.checkSelfPermission(
+                        this, android.Manifest.permission.RECORD_AUDIO
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    requestPermissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
+                } else {
+                    startRecording(File(getExternalFilesDir("Music"), "song.mp3"))
+                    val overlayLoading =
+                        layoutInflater.inflate(R.layout.overlay_loading, null).apply {
+                            setBackgroundColor(
+                                ContextCompat.getColor(
+                                    this@MainActivity, android.R.color.transparent
+                                )
+                            )
+                            isVisible = true
+                        }
+                    progressDialog =
+                        MaterialAlertDialogBuilder(this).setTitle("Analizando audio...")
+                            .setView(overlayLoading).setCancelable(false).show()
 
-                // Detener la grabación después de 10 segundos
-                Handler(Looper.getMainLooper()).postDelayed({
-                    if (isRecording) {
-                        stopRecording()
-                        progressDialog.dismiss()
-                        sendAudioToShazam()
+                    GlobalScope.launch(Dispatchers.Main) {
+                        delay(5000) // 5s
+                        if (isRecording) {
+                            stopRecording()
+                            sendAudioToShazam()
+                        }
                     }
-                }, 10000) // 10 segundos
+                }
             }
         }
     }
 
-    private var recorder: MediaRecorder? = null
-
     private fun startRecording(outputFile: File) {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.RECORD_AUDIO
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // Solicitar el permiso para grabar audio
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(android.Manifest.permission.RECORD_AUDIO),
-                200
-            )
-            return
-        }
-
         recorder = MediaRecorder().apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
@@ -212,36 +218,32 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun sendAudioToShazam() {
-        val file = File(getExternalFilesDir("Music"), "nueva_grabacion.mp3")
+        val file = File(getExternalFilesDir("Music"), "song.mp3")
 
-        val client = OkHttpClient()
+        val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart(
+            "upload_file",
+            "song.mp3",
+            file.asRequestBody("application/octet-stream".toMediaTypeOrNull())
+        ).build()
 
-        val requestBody = MultipartBody.Builder()
-            .setType(MultipartBody.FORM)
-            .addFormDataPart(
-                "upload_file", "nueva_grabacion.mp3",
-                file.asRequestBody("application/octet-stream".toMediaTypeOrNull())
-            )
-            .build()
-
-        val request = Request.Builder()
-            .url("https://shazam-api6.p.rapidapi.com/shazam/recognize/")
+        val request = Request.Builder().url("https://shazam-api6.p.rapidapi.com/shazam/recognize/")
             .post(requestBody)
             .addHeader("content-type", "multipart/form-data; boundary=---011000010111000001101001")
             .addHeader("X-RapidAPI-Key", "e133776cdamsh86b926a2158ff65p16da0cjsnb8c64f8fcee1")
-            .addHeader("X-RapidAPI-Host", "shazam-api6.p.rapidapi.com")
-            .build()
+            .addHeader("X-RapidAPI-Host", "shazam-api6.p.rapidapi.com").build()
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
                     showDialog("Error", "Error al mandar el audio a Shazam")
+                    progressDialog?.dismiss()
                 }
                 Log.e("SoundShare", "Failed to send audio to Shazam", e)
             }
 
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
+                    progressDialog?.dismiss()
                     if (response.isSuccessful) {
                         response.body?.string()?.let { responseBody ->
                             try {
@@ -268,26 +270,30 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showDialog(title: String, message: String) {
-        AlertDialog.Builder(this)
-            .setTitle(title)
-            .setMessage(message)
-            .setPositiveButton("OK", null)
-            .show()
+        MaterialAlertDialogBuilder(this).setTitle(title).setMessage(message)
+            .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+                dialog.dismiss()
+            }.show()
     }
 
     private fun showTrackDialog(title: String, subtitle: String, coverArt: String) {
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_track_info, null)
-        val imageView = dialogView.findViewById<ImageView>(R.id.coverArtImageView)
-        val titleView = dialogView.findViewById<TextView>(R.id.titleTextView)
-        val subtitleView = dialogView.findViewById<TextView>(R.id.subtitleTextView)
+        val dialogView = layoutInflater.inflate(R.layout.layout_song, null)
+        val songImage = dialogView.findViewById<ShapeableImageView>(R.id.song_image)
+        val songName = dialogView.findViewById<MaterialTextView>(R.id.song_name)
+        val artistName = dialogView.findViewById<MaterialTextView>(R.id.artist_name)
 
-        titleView.text = title
-        subtitleView.text = subtitle
-        Glide.with(this).load(coverArt).into(imageView)
+        Glide.with(this).load(coverArt).into(songImage)
+        songName.text = title
+        artistName.text = subtitle
 
-        AlertDialog.Builder(this)
-            .setView(dialogView)
-            .setPositiveButton("OK", null)
-            .show()
+        MaterialAlertDialogBuilder(this).setTitle("Title").setView(dialogView)
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                dialog.dismiss()
+            }.setNeutralButton(getString(R.string.post)) { dialog, _ ->
+                dialog.dismiss()
+            }.setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+                dialog.dismiss()
+            }.show()
     }
+
 }

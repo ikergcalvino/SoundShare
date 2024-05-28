@@ -42,11 +42,16 @@ class UserAdapter(
     override fun bindItem(view: View, item: User) {
         val binding = LayoutUserBinding.bind(view)
 
+        // Use Glide to load the profile picture
         if (!item.profilePicture.isNullOrEmpty()) {
             Glide.with(binding.userImage.context).load(item.profilePicture).into(binding.userImage)
+        } else {
+            binding.userImage.setImageResource(R.drawable.ic_account_circle) // Default image
         }
+
         binding.userName.text = item.username
 
+        // Adjust button visibility based on the friend status
         when {
             friendsList.contains(item.uid) -> {
                 binding.buttonAddFriend.visibility = View.GONE
@@ -63,6 +68,16 @@ class UserAdapter(
                 binding.buttonRemoveFriend.visibility = View.GONE
             }
         }
-    }
 
+        // Set click listeners for the buttons
+        binding.buttonAddFriend.setOnClickListener {
+            println("Add Friend Clicked")
+            clickListener.onAddFriendButtonClick(item)
+        }
+
+        binding.buttonRemoveFriend.setOnClickListener {
+            println("Remove Friend Clicked")
+            clickListener.onRemoveFriendButtonClick(item)
+        }
+    }
 }

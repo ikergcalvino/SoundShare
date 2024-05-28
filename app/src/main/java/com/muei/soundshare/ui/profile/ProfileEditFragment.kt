@@ -1,16 +1,13 @@
 package com.muei.soundshare.ui.profile
 
+import android.Manifest
+import android.content.ContentValues
+import android.content.Context
 import android.content.SharedPreferences
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffXfermode
-import android.graphics.Rect
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,142 +15,77 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.Firebase
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.muei.soundshare.R
 import com.muei.soundshare.databinding.FragmentProfileEditBinding
 import com.muei.soundshare.util.Constants
 import org.koin.android.ext.android.inject
-import java.io.ByteArrayOutputStream
 
 class ProfileEditFragment : Fragment() {
 
-    private val sharedPreferences: SharedPreferences by inject()
+    private lateinit var profileEditViewModel: ProfileEditViewModel
 
     private var _binding: FragmentProfileEditBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var auth: FirebaseAuth
+    private val sharedPreferences: SharedPreferences by inject()
+    private val firestore: FirebaseFirestore by inject()
+    private val firebaseAuth: FirebaseAuth by inject()
+    private val storage: FirebaseStorage by inject()
+
+    private var profileImage: String = ""
+    private var currentUserUid: String? = null
+    private var imageUri: Uri? = null
+
+    private val requestCameraPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                Log.d("SoundShare", "Camera permission granted")
+                imageUri = createImageUri(requireContext())
+                cameraLauncher.launch(imageUri)
+            } else {
+                Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+
+    private val cameraLauncher =
+        registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+            if (success && imageUri != null) {
+                uploadImageToStorage(imageUri!!)
+            } else {
+                Log.e("SoundShare", "Error taking picture")
+            }
+        }
+
+    private val galleryLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            if (uri != null) {
+                uploadImageToStorage(uri)
+            } else {
+                Log.e("SoundShare", "Error selecting image from gallery")
+            }
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        val profileEditViewModel = ViewModelProvider(this)[ProfileEditViewModel::class.java]
-
-        auth = FirebaseAuth.getInstance()
-        val currentUser = auth.currentUser
-
-        val db = Firebase.firestore
-
-        var profileImage = ""
+        profileEditViewModel = ViewModelProvider(this)[ProfileEditViewModel::class.java]
 
         _binding = FragmentProfileEditBinding.inflate(inflater, container, false)
 
-        setImage()
-
-        val galleryLauncher =
-            registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-                uri?.let {
-                    val bitmap =
-                        MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, uri)
-                    val circularBitmap = getCircularBitmap(bitmap)
-                    binding.profileImage.setImageBitmap(circularBitmap)
-                    val baos = ByteArrayOutputStream()
-                    circularBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-                    val data = baos.toByteArray()
-
-                    profileImage = Base64.encodeToString(data, Base64.DEFAULT)
-                }
-            }
-
-        binding.buttonUpload.setOnClickListener {
-            galleryLauncher.launch("image/*")
-        }
-
-        binding.buttonSave.setOnClickListener {
-            Log.d("SoundShare", "Save button clicked")
-
-            val password = binding.textPassword.text.toString()
-            val phoneNumber = binding.textPhoneNumber.text.toString()
-            val dateOfBirth = binding.textDateOfBirth.text.toString()
-            val currentUserEmail = currentUser!!.email
-
-            if (validatefields()) {
-                var bool = true
-                if (password.isNotEmpty()) {
-                    currentUser.updatePassword(password).addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            Log.d("SoundShare", "Password updated")
-                        } else {
-                            Log.d("SoundShare", "Password not updated")
-                            bool = false
-                        }
-                    }
-                }
-                if (phoneNumber.isNotEmpty()) {
-                    db.collection("users").document(currentUserEmail!!).update(
-                        mapOf(
-                            "phoneNumber" to phoneNumber
-                        )
-                    ).addOnSuccessListener {
-                        Log.d("SoundShare", "DocumentSnapshot successfully updated!")
-                    }.addOnFailureListener { e ->
-                        Log.w("SoundShare", "Error updating document", e)
-                        bool = false
-                    }
-                }
-
-                if (dateOfBirth.isNotEmpty()) {
-                    db.collection("users").document(currentUserEmail!!).update(
-                        mapOf(
-                            "dateOfBirth" to dateOfBirth
-                        )
-                    ).addOnSuccessListener {
-                        Log.d("SoundShare", "DocumentSnapshot successfully updated!")
-                    }.addOnFailureListener { e ->
-                        Log.w("SoundShare", "Error updating document", e)
-                        bool = false
-                    }
-                }
-
-                if (profileImage.isNotEmpty()) {
-                    db.collection("users").document(currentUserEmail!!).update(
-                        mapOf(
-                            "profileImage" to profileImage
-                        )
-                    ).addOnSuccessListener {
-                        Log.d("SoundShare", "DocumentSnapshot successfully updated!")
-                    }.addOnFailureListener { e ->
-                        Log.w("SoundShare", "Error updating document", e)
-                        bool = false
-                    }
-                }
-
-                if (bool)
-                    Toast.makeText(
-                        requireContext(),
-                        getString(R.string.profile_updated),
-                        Toast.LENGTH_LONG
-                    ).show()
-                else
-                    Toast.makeText(
-                        requireContext(),
-                        getString(R.string.profile_not_updated),
-                        Toast.LENGTH_LONG
-                    ).show()
-                findNavController().navigateUp()
-            }
-        }
-
         if (sharedPreferences.getBoolean(Constants.LOCATION, false)) {
-            binding.switchLocation.setChecked(true)
+            binding.switchLocation.isChecked = true
             binding.switchLocation.setThumbIconResource(R.drawable.ic_location_on)
         } else {
-            binding.switchLocation.setChecked(false)
+            binding.switchLocation.isChecked = false
             binding.switchLocation.setThumbIconResource(R.drawable.ic_location_off)
         }
 
@@ -170,10 +102,10 @@ class ProfileEditFragment : Fragment() {
         }
 
         if (sharedPreferences.getBoolean(Constants.DARK_MODE, false)) {
-            binding.switchDarkMode.setChecked(true)
+            binding.switchDarkMode.isChecked = true
             binding.switchDarkMode.setThumbIconResource(R.drawable.ic_dark_mode)
         } else {
-            binding.switchDarkMode.setChecked(false)
+            binding.switchDarkMode.isChecked = false
             binding.switchDarkMode.setThumbIconResource(R.drawable.ic_light_mode)
         }
 
@@ -191,44 +123,70 @@ class ProfileEditFragment : Fragment() {
             }
         }
 
+        currentUserUid = firebaseAuth.currentUser?.uid
+        setImage()
+
+        binding.buttonCamera.setOnClickListener {
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(), Manifest.permission.CAMERA
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                imageUri = createImageUri(requireContext())
+                cameraLauncher.launch(imageUri)
+            } else {
+                requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+            }
+        }
+
+        binding.buttonUpload.setOnClickListener {
+            galleryLauncher.launch("image/*")
+        }
+
+        binding.buttonSave.setOnClickListener {
+            Log.d("SoundShare", "Save button clicked")
+            if (validateFields()) {
+                updateUserProfile()
+            }
+        }
+
         return binding.root
     }
 
-    private fun validatefields(): Boolean {
+    private fun createImageUri(context: Context): Uri? {
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+        }
+        return context.contentResolver.insert(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues
+        )
+    }
+
+    private fun validateFields(): Boolean {
         val password = binding.textPassword.text.toString()
         val confirmPassword = binding.textRepeatPassword.text.toString()
         val dateOfBirth = binding.textDateOfBirth.text.toString()
-        val red = 239
-        val green = 119
-        val blue = 113
 
-        if (password.isNotEmpty() and (password.length < 8)) {
-            Toast.makeText(
-                requireContext(),
-                getString(R.string.password_length),
-                Toast.LENGTH_SHORT
-            ).show()
-            binding.textPassword.setBackgroundColor(Color.rgb(red, green, blue))
+        binding.textPassword.error = null
+        binding.textRepeatPassword.error = null
+        binding.textDateOfBirth.error = null
+
+        if (password.isNotEmpty() && password.length < 8) {
+            binding.textPassword.error = getString(R.string.password_length)
             return false
         }
 
-        if (password.isEmpty() and confirmPassword.isNotEmpty()) {
-            Toast.makeText(
-                requireContext(),
-                getString(R.string.password_required),
-                Toast.LENGTH_SHORT
-            ).show()
-            binding.textPassword.setBackgroundColor(Color.rgb(red, green, blue))
+        if (password.isEmpty() && confirmPassword.isNotEmpty()) {
+            binding.textPassword.error = getString(R.string.password_required)
             return false
         }
 
-        if (confirmPassword.isEmpty() and password.isNotEmpty()) {
-            Toast.makeText(
-                requireContext(),
-                getString(R.string.password_required),
-                Toast.LENGTH_SHORT
-            ).show()
-            binding.textRepeatPassword.setBackgroundColor(Color.rgb(red, green, blue))
+        if (confirmPassword.isEmpty() && password.isNotEmpty()) {
+            binding.textRepeatPassword.error = getString(R.string.password_required)
+            return false
+        }
+
+        if (password != confirmPassword) {
+            binding.textRepeatPassword.error = getString(R.string.passwords_dont_match)
             return false
         }
 
@@ -237,86 +195,105 @@ class ProfileEditFragment : Fragment() {
             val year = dateOfBirthArray[2].toInt()
             val currentYear = 2024
             if (currentYear - year < 18) {
-                Toast.makeText(
-                    requireContext(),
-                    getString(R.string.age_restriction),
-                    Toast.LENGTH_SHORT
-                ).show()
-                binding.textDateOfBirth.setBackgroundColor(Color.rgb(red, green, blue))
+                binding.textDateOfBirth.error = getString(R.string.age_restriction)
                 return false
             }
-        }
-
-        if (password != confirmPassword) {
-            Toast.makeText(
-                requireContext(),
-                getString(R.string.passwords_dont_match),
-                Toast.LENGTH_SHORT
-            )
-                .show()
-            binding.textRepeatPassword.setBackgroundColor(Color.rgb(red, green, blue))
-            return false
         }
 
         return true
     }
 
     private fun setImage() {
-        val db = Firebase.firestore
-        auth = FirebaseAuth.getInstance()
-        val currentUserEmail = auth.currentUser!!.email
-
-        db.collection("users").document(currentUserEmail!!).get().addOnSuccessListener { document ->
-            if (document != null) {
-                val profileImage = document.getString("profileImage")
-                if (profileImage != "") {
-                    val decodedString =
-                        Base64.decode(profileImage, Base64.DEFAULT)
-                    val decodedByte = android.graphics.BitmapFactory.decodeByteArray(
-                        decodedString,
-                        0,
-                        decodedString.size
-                    )
-                    val decodedImage = getCircularBitmap(decodedByte)
-                    binding.profileImage.setImageBitmap(decodedImage)
-                }
+        currentUserUid?.let { uid ->
+            val storageRef = storage.reference.child("profile_pictures/$uid.jpg")
+            storageRef.downloadUrl.addOnSuccessListener { uri ->
+                profileImage = uri.toString()
+                Glide.with(this).load(uri).circleCrop().into(binding.profileImage)
+            }.addOnFailureListener {
+                Log.e("SoundShare", "Error loading profile image", it)
             }
         }
     }
 
+    private fun uploadImageToStorage(uri: Uri) {
+        currentUserUid?.let { uid ->
+            val storageRef = storage.reference.child("profile_pictures/$uid.jpg")
+            storageRef.putFile(uri).addOnSuccessListener {
+                storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                    profileImage = downloadUri.toString()
+                    Glide.with(this).load(downloadUri).circleCrop().into(binding.profileImage)
+                    updateProfileImageInFirestore(downloadUri.toString())
+                }.addOnFailureListener {
+                    Log.e("SoundShare", "Error getting download URL", it)
+                }
+            }.addOnFailureListener {
+                Log.e("SoundShare", "Error uploading profile image", it)
+            }
+        }
+    }
 
-    private fun getCircularBitmap(bitmap: Bitmap): Bitmap {
-        val output = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(output)
+    private fun updateProfileImageInFirestore(imageUrl: String) {
+        val currentUserEmail = firebaseAuth.currentUser?.email
+        if (currentUserEmail != null) {
+            firestore.collection("users").document(currentUserEmail)
+                .update("profileImage", imageUrl)
+                .addOnSuccessListener {
+                    Log.d("SoundShare", "Profile image URL updated in Firestore")
+                }.addOnFailureListener { e ->
+                    Log.e("SoundShare", "Error updating profile image URL in Firestore", e)
+                }
+        }
+    }
 
-        val color = Color.RED
-        val paint = Paint()
-        val rect = Rect(0, 0, bitmap.width, bitmap.height)
+    private fun updateUserProfile() {
+        val password = binding.textPassword.text.toString()
+        val phoneNumber = binding.textPhoneNumber.text.toString()
+        val dateOfBirth = binding.textDateOfBirth.text.toString()
 
-        paint.isAntiAlias = true
-        canvas.drawARGB(0, 0, 0, 0)
-        paint.color = color
+        var success = true
 
-        if (bitmap.width > bitmap.height) {
-            canvas.drawCircle(
-                bitmap.width / 2.toFloat(),
-                bitmap.height / 2.toFloat(),
-                bitmap.height / 2.toFloat(),
-                paint
-            )
-        } else {
-            canvas.drawCircle(
-                bitmap.width / 2.toFloat(),
-                bitmap.height / 2.toFloat(),
-                bitmap.width / 2.toFloat(),
-                paint
-            )
+        if (password.isNotEmpty()) {
+            firebaseAuth.currentUser?.updatePassword(password)?.addOnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.d("SoundShare", "Password not updated")
+                    success = false
+                }
+            }
         }
 
-        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
-        canvas.drawBitmap(bitmap, rect, rect, paint)
+        if (phoneNumber.isNotEmpty()) {
+            firestore.collection("users").document(currentUserUid!!)
+                .update("phoneNumber", phoneNumber).addOnFailureListener { e ->
+                    Log.w("SoundShare", "Error updating phone number", e)
+                    success = false
+                }
+        }
 
-        return output
+        if (dateOfBirth.isNotEmpty()) {
+            firestore.collection("users").document(currentUserUid!!)
+                .update("dateOfBirth", dateOfBirth).addOnFailureListener { e ->
+                    Log.w("SoundShare", "Error updating date of birth", e)
+                    success = false
+                }
+        }
+
+        if (profileImage.isNotEmpty()) {
+            firestore.collection("users").document(currentUserUid!!)
+                .update("profileImage", profileImage).addOnFailureListener { e ->
+                    Log.w("SoundShare", "Error updating profile image", e)
+                    success = false
+                }
+        }
+
+        if (success) {
+            Toast.makeText(requireContext(), getString(R.string.profile_updated), Toast.LENGTH_LONG)
+                .show()
+            findNavController().navigateUp()
+        } else {
+            Toast.makeText(
+                requireContext(), getString(R.string.profile_not_updated), Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
     override fun onDestroyView() {

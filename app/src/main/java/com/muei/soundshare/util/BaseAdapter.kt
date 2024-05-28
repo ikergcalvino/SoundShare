@@ -35,6 +35,7 @@ abstract class BaseAdapter<T>(
                 holder.itemView.findViewById(R.id.button_add_friend)
 
             addFriendButton?.setOnClickListener {
+                println("BaseAdapter: Add Friend Clicked")
                 clickListener?.onAddFriendButtonClick(item)
             }
 
@@ -42,11 +43,11 @@ abstract class BaseAdapter<T>(
                 holder.itemView.findViewById(R.id.button_remove_friend)
 
             removeFriendButton?.setOnClickListener {
+                println("BaseAdapter: Remove Friend Clicked")
                 clickListener?.onRemoveFriendButtonClick(item)
             }
         }
     }
 
     abstract fun bindItem(view: View, item: T)
-
 }

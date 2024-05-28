@@ -69,8 +69,11 @@ class ProfileFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        loadUserFriends(firebase.currentUser!!.uid)
-        loadUserPosts(firebase.currentUser!!.uid)
+        if (firebase.currentUser != null) {
+            loadUserProfile(firebase.currentUser!!.uid)
+            loadUserFriends(firebase.currentUser!!.uid)
+            loadUserPosts(firebase.currentUser!!.uid)
+        }
     }
 
     private fun setupRecyclerView() {

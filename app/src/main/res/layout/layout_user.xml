@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="vertical"
@@ -30,19 +30,21 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_add_friend"
-        style="@style/Widget.Material3.Button.IconButton"
+        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
+        android:text="@string/add_friend"
         android:visibility="visible"
         app:icon="@drawable/ic_person_add" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_remove_friend"
-        style="@style/Widget.Material3.Button.IconButton"
+        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
+        android:text="@string/remove_friend"
         android:visibility="gone"
         app:icon="@drawable/ic_person_remove" />
 

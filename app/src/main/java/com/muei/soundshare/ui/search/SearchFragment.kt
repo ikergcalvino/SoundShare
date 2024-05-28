@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.muei.soundshare.databinding.FragmentSearchBinding
@@ -39,8 +39,7 @@ class SearchFragment : Fragment(), ItemClickListener<User> {
 
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
-        binding.recyclerUsers.layoutManager =
-            GridLayoutManager(requireContext(), 4, GridLayoutManager.VERTICAL, false)
+        binding.recyclerUsers.layoutManager = LinearLayoutManager(requireContext())
 
         userAdapter = UserAdapter(emptyList(), this@SearchFragment)
         binding.recyclerUsers.adapter = userAdapter
@@ -81,9 +80,11 @@ class SearchFragment : Fragment(), ItemClickListener<User> {
     }
 
     override fun onItemClick(item: User) {
+        println("User clicked: ${item.username}")
     }
 
     override fun onAddFriendButtonClick(item: User) {
+        println("Add friend button clicked for user: ${item.username}")
         firebase.currentUser?.let { user ->
             val currentUserRef = firestore.collection("users").document(user.uid)
             firestore.runTransaction { transaction ->
@@ -99,6 +100,7 @@ class SearchFragment : Fragment(), ItemClickListener<User> {
     }
 
     override fun onRemoveFriendButtonClick(item: User) {
+        println("Remove friend button clicked for user: ${item.username}")
         firebase.currentUser?.let { user ->
             val currentUserRef = firestore.collection("users").document(user.uid)
             firestore.runTransaction { transaction ->
@@ -118,5 +120,4 @@ class SearchFragment : Fragment(), ItemClickListener<User> {
             }
         }
     }
-
 }
