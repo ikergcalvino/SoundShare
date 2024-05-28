@@ -8,11 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.muei.soundshare.databinding.FragmentNotificationsBinding
-import com.muei.soundshare.entities.Notification
-import com.muei.soundshare.util.ItemClickListener
 import com.muei.soundshare.util.NotificationAdapter
 
-class NotificationsFragment : Fragment(), ItemClickListener<Notification> {
+class NotificationsFragment : Fragment() {
 
     private var _binding: FragmentNotificationsBinding? = null
     private val binding get() = _binding!!
@@ -28,7 +26,7 @@ class NotificationsFragment : Fragment(), ItemClickListener<Notification> {
 
         binding.recyclerNotifications.layoutManager = LinearLayoutManager(requireContext())
 
-        notificationAdapter = NotificationAdapter(notificationsViewModel.getNotifications(), this)
+        notificationAdapter = NotificationAdapter(notificationsViewModel.getNotifications(), null)
 
         binding.recyclerNotifications.adapter = notificationAdapter
 
@@ -40,12 +38,4 @@ class NotificationsFragment : Fragment(), ItemClickListener<Notification> {
         _binding = null
     }
 
-    override fun onItemClick(item: Notification) {
-    }
-
-    override fun onAddFriendButtonClick(item: Notification) {
-    }
-
-    override fun onRemoveSongButtonClick(item: Notification) {
-    }
 }

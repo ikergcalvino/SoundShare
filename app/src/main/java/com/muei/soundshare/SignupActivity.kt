@@ -74,9 +74,9 @@ class SignupActivity : AppCompatActivity() {
                                 )
 
                             val user = User(
+                                uid = userId,
                                 username = username,
                                 email = email,
-                                password = password,
                                 dateOfBirth = dateOfBirthDate!!,
                                 phoneNumber = phoneNumber
                             )
@@ -99,6 +99,8 @@ class SignupActivity : AppCompatActivity() {
                             ).show()
                         }
                     }
+            } else {
+                loadingOverlay.visibility = View.GONE
             }
         }
 

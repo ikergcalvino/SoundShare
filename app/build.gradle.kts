@@ -63,6 +63,9 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage-ktx")
 
+    implementation("androidx.credentials:credentials:1.2.2")
+    implementation("com.android.identity:identity-credential:20231002")
+
     implementation("com.google.android.gms:play-services-auth:21.2.0")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.google.android.gms:play-services-location:21.2.0")

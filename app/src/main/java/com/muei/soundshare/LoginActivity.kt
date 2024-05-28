@@ -28,7 +28,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
-import java.util.Date
 
 class LoginActivity : AppCompatActivity() {
 
@@ -76,11 +75,14 @@ class LoginActivity : AppCompatActivity() {
                             startActivity(mainIntent)
                             finish()
                         } else {
+                            loadingOverlay.visibility = View.GONE
                             Toast.makeText(
                                 applicationContext, "Sign in failed.", Toast.LENGTH_SHORT
                             ).show()
                         }
                     }
+            } else {
+                loadingOverlay.visibility = View.GONE
             }
         }
 
@@ -156,28 +158,29 @@ class LoginActivity : AppCompatActivity() {
             }
 
             val user = User(
+                uid = userId,
                 username = username,
                 email = email,
-                password = "", // Password not needed for Google sign-in
-                dateOfBirth = Date(), // Default or handle appropriately
                 profilePicture = profilePictureFixedUrl
             )
 
-            userRef.set(user)
+            userRef.set(user).await()
         }
     }
 
     private suspend fun saveProfilePictureToStorage(url: String, userId: String): String? {
         return try {
             val file = withContext(Dispatchers.IO) {
-                Glide.with(this@LoginActivity).asFile().load(url)
+                Glide.with(this@LoginActivity).downloadOnly().load(url)
                     .submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).get()
             }
 
+            val uri = Uri.fromFile(file)
             val storageRef = storage.reference.child("profile_pictures/$userId.jpg")
-            storageRef.putFile(Uri.fromFile(file)).await()
+            storageRef.putFile(uri).await()
             storageRef.downloadUrl.await().toString()
         } catch (e: Exception) {
+            Log.e("SoundShare", "Error saving profile picture: ${e.message}")
             null
         }
     }

@@ -14,7 +14,7 @@
             android:id="@+id/search_bar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="@string/search_users_posts" />
+            android:hint="@string/search_users" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

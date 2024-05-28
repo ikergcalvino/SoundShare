@@ -23,25 +23,27 @@ abstract class BaseAdapter<T>(
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-        val item = items[position]
-        bindItem(holder.itemView, item)
+        if (position < items.size) {
+            val item = items[position]
+            bindItem(holder.itemView, item)
 
-        holder.itemView.setOnClickListener {
-            clickListener?.onItemClick(item)
-        }
+            holder.itemView.setOnClickListener {
+                clickListener?.onItemClick(item)
+            }
 
-        val addFriendButton: MaterialButton? =
-            holder.itemView.findViewById(R.id.button_add_friend)
+            val addFriendButton: MaterialButton? =
+                holder.itemView.findViewById(R.id.button_add_friend)
 
-        addFriendButton?.setOnClickListener {
-            clickListener?.onAddFriendButtonClick(item)
-        }
+            addFriendButton?.setOnClickListener {
+                clickListener?.onAddFriendButtonClick(item)
+            }
 
-        val removeSongButton: MaterialButton? =
-            holder.itemView.findViewById(R.id.button_remove_song)
+            val removeFriendButton: MaterialButton? =
+                holder.itemView.findViewById(R.id.button_remove_friend)
 
-        removeSongButton?.setOnClickListener {
-            clickListener?.onRemoveSongButtonClick(item)
+            removeFriendButton?.setOnClickListener {
+                clickListener?.onRemoveFriendButtonClick(item)
+            }
         }
     }
 

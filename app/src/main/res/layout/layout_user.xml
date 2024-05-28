@@ -30,21 +30,19 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_add_friend"
-        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+        style="@style/Widget.Material3.Button.IconButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
-        android:text="@string/add_friend"
-        android:visibility="gone"
+        android:visibility="visible"
         app:icon="@drawable/ic_person_add" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_remove_friend"
-        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+        style="@style/Widget.Material3.Button.IconButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
-        android:text="@string/remove_friend"
         android:visibility="gone"
         app:icon="@drawable/ic_person_remove" />
 

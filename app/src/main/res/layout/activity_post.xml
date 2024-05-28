@@ -71,6 +71,7 @@
         android:layout_height="0dp"
         android:layout_margin="8dp"
         android:background="@android:color/transparent"
+        android:enabled="false"
         android:hint="@string/text_post"
         android:inputType="text"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -6,7 +6,7 @@ import com.muei.soundshare.databinding.LayoutNotificationBinding
 import com.muei.soundshare.entities.Notification
 
 class NotificationAdapter(
-    notifications: List<Notification>, clickListener: ItemClickListener<Notification>
+    notifications: List<Notification>, clickListener: ItemClickListener<Notification>?
 ) : BaseAdapter<Notification>(notifications, clickListener, R.layout.layout_notification) {
 
     override fun bindItem(view: View, item: Notification) {

@@ -2,9 +2,9 @@ package com.muei.soundshare.util
 
 import android.view.View
 import com.muei.soundshare.R
-import com.muei.soundshare.SpotifyClient
 import com.muei.soundshare.databinding.LayoutPostBinding
 import com.muei.soundshare.entities.Post
+import com.muei.soundshare.services.SpotifyClient
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -30,7 +30,7 @@ class PostAdapter(private val posts: List<Post>, clickListener: ItemClickListene
 
     override fun bindItem(view: View, item: Post) {
         val binding = LayoutPostBinding.bind(view)
-        binding.userName.text = item.userId.toString()
+        binding.userName.text = "USUARIO"
 
         spotifyClient.getTrack(item.songId) { song ->
             song?.let {

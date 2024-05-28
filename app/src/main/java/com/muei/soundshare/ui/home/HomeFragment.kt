@@ -9,11 +9,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.muei.soundshare.databinding.FragmentHomeBinding
-import com.muei.soundshare.entities.Post
-import com.muei.soundshare.util.ItemClickListener
 import com.muei.soundshare.util.PostAdapter
 
-class HomeFragment : Fragment(), ItemClickListener<Post> {
+class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -29,7 +27,7 @@ class HomeFragment : Fragment(), ItemClickListener<Post> {
 
         binding.recyclerHome.layoutManager = LinearLayoutManager(requireContext())
 
-        postAdapter = PostAdapter(homeViewModel.getPosts(), this)
+        postAdapter = PostAdapter(homeViewModel.getPosts(), null)
 
         binding.recyclerHome.adapter = postAdapter
 
@@ -57,12 +55,4 @@ class HomeFragment : Fragment(), ItemClickListener<Post> {
         _binding = null
     }
 
-    override fun onItemClick(item: Post) {
-    }
-
-    override fun onAddFriendButtonClick(item: Post) {
-    }
-
-    override fun onRemoveSongButtonClick(item: Post) {
-    }
 }
