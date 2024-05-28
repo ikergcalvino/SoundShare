@@ -3,7 +3,6 @@ package com.muei.soundshare.ui.map
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,11 +18,11 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.muei.soundshare.R
-import com.muei.soundshare.databinding.FragmentMapBinding
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
+import com.muei.soundshare.R
+import com.muei.soundshare.databinding.FragmentMapBinding
+
 class MapFragment : Fragment(), OnMapReadyCallback {
 
     private var _binding: FragmentMapBinding? = null
@@ -58,8 +57,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         map = googleMap
         enableMyLocation()
         moveCameraToCurrentLocation()
-        addPostMarkers(map,1.0)
+        addPostMarkers(map, 1.0)
     }
+
     private fun addPostMarkers(googleMap: GoogleMap, threshold: Double) {
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
@@ -110,7 +110,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                                     )
                                     val content = document.getString("content") ?: continue
                                     val songId = document.getString("songId") ?: continue
-                                    marker?.tag = CustomInfoWindowAdapter.PostInfo(content,songId)
+                                    marker?.tag = CustomInfoWindowAdapter.PostInfo(content, songId)
 //                                    googleMap.setOnMarkerClickListener { marker ->
 //                                        marker.showInfoWindow()
 //                                        true
@@ -193,7 +193,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 ).show()
             }
     }
-//    private fun showPostInfoDialog(postInfo: CustomInfoWindowAdapter.PostInfo) {
+
+    //    private fun showPostInfoDialog(postInfo: CustomInfoWindowAdapter.PostInfo) {
 //        MaterialAlertDialogBuilder(requireContext())
 //            .setTitle("Post Info")
 //            .setMessage("Content: ${postInfo.content}\nSong ID: ${postInfo.songId}")

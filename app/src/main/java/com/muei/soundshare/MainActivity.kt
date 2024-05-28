@@ -22,8 +22,6 @@ import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.muei.soundshare.databinding.ActivityMainBinding
 import okhttp3.Call
 import okhttp3.Callback

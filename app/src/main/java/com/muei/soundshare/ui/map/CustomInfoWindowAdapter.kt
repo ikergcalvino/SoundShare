@@ -1,7 +1,7 @@
 package com.muei.soundshare.ui.map
 
-import android.view.View
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.TextView
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.Marker
@@ -26,12 +26,12 @@ class CustomInfoWindowAdapter(inflater: LayoutInflater) : GoogleMap.InfoWindowAd
 
     }
 
-    override fun getInfoWindow(marker: Marker): View? {
+    override fun getInfoWindow(marker: Marker): View {
         renderWindowText(marker, mWindow)
         return mWindow
     }
 
-    override fun getInfoContents(marker: Marker): View? {
+    override fun getInfoContents(marker: Marker): View {
         renderWindowText(marker, mWindow)
         return mWindow
     }

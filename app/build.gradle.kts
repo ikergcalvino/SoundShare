@@ -74,7 +74,4 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.github.bumptech.glide:glide:4.16.0")
 
-    implementation(files("libs/acrcloud-universal-sdk-1.3.26.jar"))
-    implementation("org.chromium.net:cronet-embedded:119.6045.31")
-
 }
