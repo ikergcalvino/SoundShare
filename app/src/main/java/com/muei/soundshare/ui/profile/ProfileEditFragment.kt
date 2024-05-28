@@ -40,7 +40,7 @@ class ProfileEditFragment : Fragment() {
     private val firebaseAuth: FirebaseAuth by inject()
     private val storage: FirebaseStorage by inject()
 
-    private var profileImage: String = ""
+    private var profilePicture: String = ""
     private var currentUserUid: String? = null
     private var imageUri: Uri? = null
 
@@ -207,8 +207,8 @@ class ProfileEditFragment : Fragment() {
         currentUserUid?.let { uid ->
             val storageRef = storage.reference.child("profile_pictures/$uid.jpg")
             storageRef.downloadUrl.addOnSuccessListener { uri ->
-                profileImage = uri.toString()
-                Glide.with(this).load(uri).circleCrop().into(binding.profileImage)
+                profilePicture = uri.toString()
+                Glide.with(this).load(uri).circleCrop().into(binding.profilePicture)
             }.addOnFailureListener {
                 Log.e("SoundShare", "Error loading profile image", it)
             }
@@ -220,9 +220,9 @@ class ProfileEditFragment : Fragment() {
             val storageRef = storage.reference.child("profile_pictures/$uid.jpg")
             storageRef.putFile(uri).addOnSuccessListener {
                 storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                    profileImage = downloadUri.toString()
-                    Glide.with(this).load(downloadUri).circleCrop().into(binding.profileImage)
-                    updateProfileImageInFirestore(downloadUri.toString())
+                    profilePicture = downloadUri.toString()
+                    Glide.with(this).load(downloadUri).circleCrop().into(binding.profilePicture)
+                    updateprofilePictureInFirestore(downloadUri.toString())
                 }.addOnFailureListener {
                     Log.e("SoundShare", "Error getting download URL", it)
                 }
@@ -232,11 +232,11 @@ class ProfileEditFragment : Fragment() {
         }
     }
 
-    private fun updateProfileImageInFirestore(imageUrl: String) {
+    private fun updateprofilePictureInFirestore(imageUrl: String) {
         val currentUserEmail = firebaseAuth.currentUser?.email
         if (currentUserEmail != null) {
             firestore.collection("users").document(currentUserEmail)
-                .update("profileImage", imageUrl)
+                .update("profilePicture", imageUrl)
                 .addOnSuccessListener {
                     Log.d("SoundShare", "Profile image URL updated in Firestore")
                 }.addOnFailureListener { e ->
@@ -277,9 +277,9 @@ class ProfileEditFragment : Fragment() {
                 }
         }
 
-        if (profileImage.isNotEmpty()) {
+        if (profilePicture.isNotEmpty()) {
             firestore.collection("users").document(currentUserUid!!)
-                .update("profileImage", profileImage).addOnFailureListener { e ->
+                .update("profilePicture", profilePicture).addOnFailureListener { e ->
                     Log.w("SoundShare", "Error updating profile image", e)
                     success = false
                 }
