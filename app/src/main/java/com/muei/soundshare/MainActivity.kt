@@ -1,7 +1,10 @@
 package com.muei.soundshare
 
+import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.hardware.Sensor
+import android.hardware.SensorManager
 import android.media.MediaRecorder
 import android.os.Bundle
 import android.util.Log
@@ -22,6 +25,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textview.MaterialTextView
 import com.muei.soundshare.databinding.ActivityMainBinding
+import com.muei.soundshare.util.ShakeDetector
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -50,6 +54,10 @@ class MainActivity : AppCompatActivity() {
     private var recorder: MediaRecorder? = null
     private var progressDialog: AlertDialog? = null
     private val client = OkHttpClient()
+
+    private lateinit var sensorManager: SensorManager
+    private lateinit var accelerometer: Sensor
+    private lateinit var shakeDetector: ShakeDetector
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -154,35 +162,49 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.buttonShazam.setOnClickListener {
-            if (isRecording) {
-                stopRecording()
-            } else {
-                if (ContextCompat.checkSelfPermission(
-                        this, android.Manifest.permission.RECORD_AUDIO
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    requestPermissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
-                } else {
-                    startRecording(File(getExternalFilesDir("Music"), "song.mp3"))
-                    val overlayLoading =
-                        layoutInflater.inflate(R.layout.overlay_loading, null).apply {
-                            setBackgroundColor(
-                                ContextCompat.getColor(
-                                    this@MainActivity, android.R.color.transparent
-                                )
-                            )
-                            isVisible = true
-                        }
-                    progressDialog =
-                        MaterialAlertDialogBuilder(this).setTitle("Analizando audio...")
-                            .setView(overlayLoading).setCancelable(false).show()
+            handleShazamClick()
+        }
 
-                    GlobalScope.launch(Dispatchers.Main) {
-                        delay(5000) // 5s
-                        if (isRecording) {
-                            stopRecording()
-                            sendAudioToShazam()
-                        }
+        // Initialize the sensor manager and accelerometer sensor
+        sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)!!
+        shakeDetector = ShakeDetector {
+            handleShazamClick()
+        }
+
+        sensorManager.registerListener(shakeDetector, accelerometer, SensorManager.SENSOR_DELAY_UI)
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun handleShazamClick() {
+        if (isRecording) {
+            stopRecording()
+        } else {
+            if (ContextCompat.checkSelfPermission(
+                    this, Manifest.permission.RECORD_AUDIO
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+            } else {
+                startRecording(File(getExternalFilesDir("Music"), "song.mp3"))
+                val overlayLoading =
+                    layoutInflater.inflate(R.layout.overlay_loading, null).apply {
+                        setBackgroundColor(
+                            ContextCompat.getColor(
+                                this@MainActivity, android.R.color.transparent
+                            )
+                        )
+                        isVisible = true
+                    }
+                progressDialog =
+                    MaterialAlertDialogBuilder(this).setTitle("Analizando audio...")
+                        .setView(overlayLoading).setCancelable(false).show()
+
+                GlobalScope.launch(Dispatchers.Main) {
+                    delay(5000) // 5s
+                    if (isRecording) {
+                        stopRecording()
+                        sendAudioToShazam()
                     }
                 }
             }
@@ -256,7 +278,7 @@ class MainActivity : AppCompatActivity() {
 
                                 showTrackDialog(title, subtitle, coverArt)
                             } catch (e: Exception) {
-                                showDialog("Error", "Error parsing response")
+                                showDialog("Error", "No se ha podido analizar la canción")
                                 Log.e("SoundShare", "Error parsing response", e)
                             }
                         }
