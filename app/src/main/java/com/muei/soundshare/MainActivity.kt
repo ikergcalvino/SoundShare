@@ -52,6 +52,7 @@ class MainActivity : AppCompatActivity() {
 
     private var isRecording = false
     private var isAnalyzing = false
+    private var isDialogShowing = false
     private var recorder: MediaRecorder? = null
     private var progressDialog: AlertDialog? = null
     private val client = OkHttpClient()
@@ -178,35 +179,38 @@ class MainActivity : AppCompatActivity() {
 
     @OptIn(DelicateCoroutinesApi::class)
     private fun handleShazamClick() {
-        if (isRecording || isAnalyzing) {
-            return
-        } else {
-            if (ContextCompat.checkSelfPermission(
-                    this, Manifest.permission.RECORD_AUDIO
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+        if (!isAnalyzing && !isDialogShowing) {
+            if (isRecording) {
+                stopRecording()
             } else {
-                isAnalyzing = true
-                startRecording(File(getExternalFilesDir("Music"), "song.mp3"))
-                val overlayLoading =
-                    layoutInflater.inflate(R.layout.overlay_loading, null).apply {
-                        setBackgroundColor(
-                            ContextCompat.getColor(
-                                this@MainActivity, android.R.color.transparent
+                if (ContextCompat.checkSelfPermission(
+                        this, Manifest.permission.RECORD_AUDIO
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+                } else {
+                    startRecording(File(getExternalFilesDir("Music"), "song.mp3"))
+                    val overlayLoading =
+                        layoutInflater.inflate(R.layout.overlay_loading, null).apply {
+                            setBackgroundColor(
+                                ContextCompat.getColor(
+                                    this@MainActivity, android.R.color.transparent
+                                )
                             )
-                        )
-                        isVisible = true
-                    }
-                progressDialog =
-                    MaterialAlertDialogBuilder(this).setTitle("Analizando audio...")
-                        .setView(overlayLoading).setCancelable(false).show()
+                            isVisible = true
+                        }
+                    progressDialog =
+                        MaterialAlertDialogBuilder(this).setTitle("Analizando audio...")
+                            .setView(overlayLoading).setCancelable(false).show()
 
-                GlobalScope.launch(Dispatchers.Main) {
-                    delay(9000) // 9s
-                    if (isRecording) {
-                        stopRecording()
-                        sendAudioToShazam()
+                    isAnalyzing = true
+
+                    GlobalScope.launch(Dispatchers.Main) {
+                        delay(9000) // 9s
+                        if (isRecording) {
+                            stopRecording()
+                            sendAudioToShazam()
+                        }
                     }
                 }
             }
@@ -262,6 +266,7 @@ class MainActivity : AppCompatActivity() {
                     showDialog("Error", "Error al mandar el audio a Shazam")
                     progressDialog?.dismiss()
                     isAnalyzing = false
+                    isDialogShowing = true
                 }
                 Log.e("SoundShare", "Failed to send audio to Shazam", e)
             }
@@ -269,7 +274,6 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     progressDialog?.dismiss()
-                    isAnalyzing = false
                     if (response.isSuccessful) {
                         response.body?.string()?.let { responseBody ->
                             try {
@@ -290,6 +294,8 @@ class MainActivity : AppCompatActivity() {
                         showDialog("Error", "Error response from Shazam: ${response.message}")
                         Log.e("SoundShare", "Error response from Shazam: ${response.message}")
                     }
+                    isAnalyzing = false
+                    isDialogShowing = true
                 }
             }
         })
@@ -299,6 +305,7 @@ class MainActivity : AppCompatActivity() {
         MaterialAlertDialogBuilder(this).setTitle(title).setMessage(message)
             .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
                 dialog.dismiss()
+                isDialogShowing = false
             }.show()
     }
 
@@ -315,10 +322,13 @@ class MainActivity : AppCompatActivity() {
         MaterialAlertDialogBuilder(this).setTitle("Title").setView(dialogView)
             .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                 dialog.dismiss()
+                isDialogShowing = false
             }.setNeutralButton(getString(R.string.post)) { dialog, _ ->
                 dialog.dismiss()
+                isDialogShowing = false
             }.setPositiveButton(getString(R.string.ok)) { dialog, _ ->
                 dialog.dismiss()
+                isDialogShowing = false
             }.show()
     }
 
