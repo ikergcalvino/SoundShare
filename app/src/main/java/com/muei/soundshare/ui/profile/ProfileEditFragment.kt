@@ -56,8 +56,6 @@ class ProfileEditFragment : Fragment() , ItemClickListener<Song> {
     private var imageUri: Uri? = null
     private lateinit var resultDialog: AlertDialog
     private var favouriteSongId: String = ""
-    private var favouriteSongPicture: String = ""
-    private var favouriteSongArtist: String = ""
 
 
 
@@ -345,16 +343,7 @@ class ProfileEditFragment : Fragment() , ItemClickListener<Song> {
                 Log.w("SoundShare", "Error updating favourite song id", e)
                 success = false
             }
-//        firestore.collection("users").document(currentUserUid!!)
-//            .update("favouriteSongArtist", favouriteSongName).addOnFailureListener { e ->
-//                Log.w("SoundShare", "Error updating favourite song artist", e)
-//                success = false
-//            }
-//        firestore.collection("users").document(currentUserUid!!)
-//            .update("favouriteSongPicture", favouriteSongName).addOnFailureListener { e ->
-//                Log.w("SoundShare", "Error updating favourite song picture", e)
-//                success = false
-//            }
+
     }
 
     override fun onDestroyView() {
@@ -363,10 +352,8 @@ class ProfileEditFragment : Fragment() , ItemClickListener<Song> {
     }
 
     override fun onItemClick(item: Song) {
-        println("A")
         favouriteSongId=item.songId
-//        favouriteSongPicture= item.songImage.toString()
-//        favouriteSongArtist=item.artist
+
         resultDialog.dismiss()
 
     }
